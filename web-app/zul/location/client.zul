@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./clientWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+    <style>div.minimize {
+        border: 1px solid #79858E;
+        background: #D3E1EC;
+        position: absolute;
+        opacity: 0.8;
+        z-index: 999999;
+        }
+    </style>
+    <script type="text/javascript"><![CDATA[
+        function flowDown(wleft, wtop) {
+            var w = jq('$locationWin'), b = jq('$lstObjet');
+            //Minimize from the Window to the order button
+            jq('<div class="minimize" />').appendTo("body").css({
+                left : wleft,
+                top : wtop,
+                width : w.width(),
+                height : 10
+            });
+            p = b.offset();
+            jq('.minimize').animate({
+                left : p.left + b.width() / 2,
+                top : p.top + b.height() / 2,
+                width : 0,
+                height : 0
+            }, function() {
+                jq(this).remove();
+            });
+        }
+        ]]>
+    </script>
+
+    <window id="clientWin" height="100%" width="100%" style="margin:auto;" use="${clientWindow}">
+    
+    <!-- <zscript src="/zs/client.zs"/> -->
+        <borderlayout>
+            <north id="eastPanel" size="65px" open="false"  title="Recherche avancée" flex="true" splittable="true"  collapsible="true"  >
+                <hlayout spacing="10px" style="margin-top:9px;margin-left:10px">
+					
+                    <label value="Pays :" />
+                    <combobox id="filternationalite" model="@{clientWin.nationalites}" selectedItem="@{clientWin.filtre.nationalite}" autocomplete="true" autodrop="true" mold="rounded" onSelect="clientWin.ofs=0;clientWin.filtrer()" onOK="clientWin.ofs=0;clientWin.filtrer()">
+                        <comboitem self="@{each=elementfiltrenationalite}" label="@{elementfiltrenationalite}"/>
+                    </combobox>
+					
+                </hlayout>
+            </north>
+            <west id="westPanel" title="Gestion d'enregistrement" size="40%" flex="true" splittable="true" collapsible="true" open="false">
+                <groupbox id="gbCrud" width="100%" height="100%">
+                    <panel title="Informations client" open="true" border="normal" collapsible="true" sizable="true">
+                        <panelchildren style="overflow: auto">
+                            <grid fixedLayout="true">
+                                <rows>
+                                    <row>
+                                        <label value="Nom"/>
+								 
+                                        <textbox id="fieldNom" constraint="no empty: Veillez indiquez une valeur" value="@{clientWin.objet.nom, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+						
+                                    <row>
+                                        <label value="Prénom"/>
+								 
+                                        <textbox id="fieldPrenom" constraint="no empty: Veillez indiquez une valeur" value="@{clientWin.objet.prenom, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+
+                                    <row>
+                                        <label value="Date de naissance"/>
+                                
+                                        <datebox id="fieldDateNaissance" width="100%" format="dd/MM/yyyy" value="@{clientWin.objet.dateNaissance, save-when='triggerBtn.onClick'}" />
+                                    </row>
+
+                                    <row>
+                                        <label value="Lieu de naissance"/>
+                                        <textbox id="fieldLieuNaissance" value="@{clientWin.objet.lieuNaissance, save-when='triggerBtn.onClick'}" />
+                                    </row>
+
+                                    <row>
+                                        <label value="Choix identité:" />
+                                        <radiogroup>
+                                            <radio id="rcin" label="CIN" checked="true">
+                                                <attribute name="onCheck">
+                                            <![CDATA[
+                                                fieldCne.value = "";
+                                                fieldCarteSejour.value = "";
+                                                fieldNumeroPassport.value = "";
+                                                
+                                                rw1.visible = true;
+                                                rw2.visible = false;
+                                                rw3.visible = false;
+                                                rw4.visible = false;
+                                            ]]>
+                                                </attribute>
+                                            </radio>
+                                            <radio id="rcne" label="CNE">
+                                                <attribute name="onCheck">
+                                            <![CDATA[
+                                            
+                                                fieldCin.value = "";
+                                                fieldCarteSejour.value = "";
+                                                fieldNumeroPassport.value = "";
+                                                
+                                                rw1.visible = false;
+                                                rw2.visible = true;
+                                                rw3.visible = false;
+                                                rw4.visible = false;
+                                            ]]>
+                                                </attribute>
+                                            </radio>
+                                            <radio id="rcs" label="CS" >
+                                                <attribute name="onCheck">
+                                            <![CDATA[
+                                            
+                                                fieldCin.value = "";
+                                                fieldCne.value = "";
+                                                
+                                                rw1.visible = false;
+                                                rw2.visible = false;
+                                                rw3.visible = true;
+                                                rw4.visible = true;
+                                            ]]>
+                                                </attribute>
+                                            </radio>
+                                        </radiogroup>
+                                    </row>
+                                    
+                                    <row id="rw1">
+                                        <label value="CIN"/>
+								 
+                                        <textbox id="fieldCin" value="@{clientWin.objet.cin, save-when='triggerBtn.onClick'}" />
+                                    </row>
+						
+                                    <row id="rw2" visible="false">
+                                        <label value="CNE"/>
+								 
+                                        <textbox id="fieldCne" value="@{clientWin.objet.cne, save-when='triggerBtn.onClick'}" />
+                                    </row>
+						
+                                    <row id="rw3" visible="false">
+                                        <label value="Carte de séjour"/>
+								 
+                                        <textbox id="fieldCarteSejour" value="@{clientWin.objet.carteSejour, save-when='triggerBtn.onClick'}" />
+                                    </row>
+
+                                    <row id="rw4" visible="false">
+                                        <label value="Numéro de Passport"/>
+                                        <textbox id="fieldNumeroPassport" value="@{clientWin.objet.numeroPassport, save-when='triggerBtn.onClick'}" />
+                                    </row>
+
+                                    <row>
+                                        <label value="Numéro du permis"/>
+
+                                        <textbox id="fieldNumeroPermis" value="@{clientWin.objet.numeroPermis, save-when='triggerBtn.onClick'}" />
+                                    </row>
+                                    
+                                </rows>
+                            </grid>
+                        </panelchildren>
+                    </panel>
+                    <panel title="Contact client" open="true" border="normal" collapsible="true" sizable="true">
+                        <panelchildren style="overflow: auto">
+                            <grid fixedLayout="true">
+                                <rows>
+                                    <row>
+                                        <label value="Adresse Maroc"/>
+								 
+                                        <textbox id="fieldAdresseMaroc" value="@{clientWin.objet.adresseMaroc, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+						
+                                    <row>
+                                        <label value="Adresse à l'étranger"/>
+								 
+                                        <textbox id="fieldAdresseEtranger" value="@{clientWin.objet.adresseEtranger, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+
+                                    <row>
+                                        <label value="Ville"/>
+                                        <textbox id="fieldVille" value="@{clientWin.objet.ville, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+
+                                    <row>
+                                        <label value="Code postale"/>
+                                        <textbox id="fieldCodePostale" value="@{clientWin.objet.codePostale, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+						
+                                    <row>
+                                        <label value="Gsm"/>
+								 
+                                        <textbox id="fieldGsm" constraint="no empty: Veillez indiquez une valeur" value="@{clientWin.objet.gsm, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+						
+                                    <row>
+                                        <label value="Fixe"/>
+								 
+                                        <textbox id="fieldFixe" value="@{clientWin.objet.fixe, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+						
+                                    <row>
+                                        <label value="Mail"/>
+								 
+                                        <textbox id="fieldMail" constraint="/(.+@.+\.[a-z]+)?/ : Veillez Entrez une adresse mail valide" value="@{clientWin.objet.mail, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+                                </rows>
+                            </grid>
+                        </panelchildren>
+                    </panel>
+                    <separator />
+                    <grid fixedLayout="true" >
+                        <rows>
+                            <row>
+                                <label value="Nationalité"/>
+                                <combobox id="conationalites" model="@{clientWin.nationalites}" selectedItem="@{clientWin.nationaliteSelected}">
+                                    <comboitem self="@{each=elementnationalite}" label="@{elementnationalite}"/>
+                                </combobox>
+                            </row>
+                        </rows>
+                    </grid>
+                    <separator />
+                    <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));clientWin.add()" label="Sauveguarder" image="/images/skin/database_save.png"/>
+                    <button id="btnUpdate" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));clientWin.update()" label="Modifier" image="/images/skin/database_edit.png" visible="false"/>
+                    <button id="btnDelete" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));clientWin.delete()" label="Supprimer" image="/images/skin/database_delete.png" visible="false"/>
+                    <!-- <button id="btnNew" onClick="clientWin.newRecord()" label="Nouveau enregistrement" image="/images/skin/database_add.png"/> -->
+                    <button id="btnCancel" onClick="clientWin.cancel()" label="Annuler" image="/images/skin/cancel.png" visible="false"/>
+                    <button visible="false" id="triggerBtn" onBindingValidate=""/>
+                </groupbox>
+            </west>
+            <center border="none" flex="true">
+                <groupbox width="100%" height="100%">
+                    <listbox id="lstObjet" onSelect="clientWin.select()" model="@{clientWin.listeObjets}" selectedItem="@{clientWin.objetSelected}"  width="100%" height="100%" mold="paging" paginal="${paging}">
+                        <auxhead sclass="category-center">
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterCin" value="@{clientWin.filtre.cin}" onChanging="clientWin.ofs=0; clientWin.filtre.cin=event.value; clientWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterNom" value="@{clientWin.filtre.nom}" onChanging="clientWin.ofs=0; clientWin.filtre.nom=event.value; clientWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterPrenom" value="@{clientWin.filtre.prenom}" onChanging="clientWin.ofs=0; clientWin.filtre.prenom=event.value; clientWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>
+					 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterGsm" value="@{clientWin.filtre.gsm}" onChanging="clientWin.ofs=0; clientWin.filtre.gsm=event.value; clientWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>
+						 
+                        </auxhead>
+                        <listhead sizable="true">
+                            <listheader label="Cin" sort="auto(cin)" onSort="clientWin.sort(event)"/>
+			
+                            <listheader label="Nom" sort="auto(nom)" onSort="clientWin.sort(event)"/>
+							
+                            <listheader label="Prénom" sort="auto(prenom)" onSort="clientWin.sort(event)"/>
+							
+                            <listheader label="Gsm" sort="auto(gsm)" onSort="clientWin.sort(event)"/>
+						                                 
+                        </listhead>
+                        <listitem self="@{each=element}">
+                            
+                            <listcell label="@{element.cin}"/>
+
+                            <listcell label="@{element.nom}"/>
+							
+                            <listcell label="@{element.prenom}"/>
+							
+                            <listcell label="@{element.gsm}"/>
+							
+                        </listitem>
+                    </listbox>
+                    <paging id="paging" totalSize="@{clientWin.tailleListe}" pageSize="@{clientWin.maxNb}" onPaging="clientWin.getNextElements(event);" />
+                    <separator/>
+                    <button id="btnNew" onClick="clientWin.newRecord()" label="Nouveau" image="/images/skin/database_add.png"/>
+                </groupbox>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

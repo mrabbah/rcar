@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./locationClientWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+        
+    
+    <window id="locationClientWin" height="100%" width="100%" use="${locationClientWindow}" 
+    border="normal" zclass="z-window-modal" closable="true"
+    position="center" xmlns:c="client" action="show: slideDown;hide: slideUp">
+        <caption image="/images/skin/database_add.png" label="Nouveau PV" style="overflow: auto"/>
+        <attribute c:name="onClose"><![CDATA[
+        event.stop();
+        var w = this;
+        jq(this).slideUp(600, function() {
+            w.sendAU_(event);
+            flowDown(event.target._left, event.target._top);
+        });
+        ]]>
+        </attribute>
+        <zscript><![CDATA[
+        int[] orderArray = new int[50];
+        for (int j = 0; j < 50; j++)
+            orderArray[j] = 456 + j;
+        void winClose() {
+            Clients.evalJavaScript("flowDown()");
+        }
+        ]]>
+        </zscript>
+        <tabbox id="tb" width="100%" height="96%" mold="accordion">
+            <tabs>
+                <tab label="Premier conducteur" />
+                <tab label="Deuxième conducteur" />
+                <tab label="Contrat et déclaration préalable Numérisés" />
+            </tabs>
+            <tabpanels>
+                <tabpanel>
+                    <groupbox>
+                        <caption label="Premier conducteur" />
+                        <grid fixedLayout="true">
+                            <rows>
+						
+                                <row>
+                                    <label value="Nom"/>
+								 
+                                    <textbox id="fieldNom" constraint="no empty: Veillez indiquez une valeur" value="@{locationClientWin.premierConducteur.nom, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            
+                                    <label value="Prénom"/>
+								 
+                                    <textbox id="fieldPrenom" constraint="no empty: Veillez indiquez une valeur" value="@{locationClientWin.premierConducteur.prenom, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                </row>												
+			
+                                <row>
+                                    <label value="Choix identité:" />
+                                    <radiogroup>
+                                        <radio id="rcin" label="CIN" checked="true">
+                                            <attribute name="onCheck">
+                                            <![CDATA[
+                                                
+                                                fieldCin.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldCne.constraint = "";
+                                                fieldCarteSejour.constraint = "";
+                                                fieldNumeroPassport.constraint = "";
+                                                
+                                                fieldCne.value = "";
+                                                fieldCarteSejour.value = "";
+                                                fieldNumeroPassport.value = "";
+                                                
+                                                rw1.visible = true;
+                                                rw2.visible = false;
+                                                rw3.visible = false;
+                                                rw4.visible = false;
+                                            ]]>
+                                            </attribute>
+                                        </radio>
+                                        <radio id="rcne" label="CNE">
+                                            <attribute name="onCheck">
+                                            <![CDATA[
+                                            
+                                                fieldCin.constraint = "";
+                                                fieldCne.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldCarteSejour.constraint = "";
+                                                fieldNumeroPassport.constraint = "";
+                                                
+                                                fieldCin.value = "";
+                                                fieldCarteSejour.value = "";
+                                                fieldNumeroPassport.value = "";
+                                                
+                                                rw1.visible = false;
+                                                rw2.visible = true;
+                                                rw3.visible = false;
+                                                rw4.visible = false;
+                                            ]]>
+                                            </attribute>
+                                        </radio>
+                                        <radio id="rcs" label="CS + Passport" >
+                                            <attribute name="onCheck">
+                                            <![CDATA[
+                                            
+                                                fieldCin.constraint = "";
+                                                fieldCne.constraint = "";
+                                                fieldCarteSejour.constraint = "";
+                                                fieldNumeroPassport.constraint = "";
+                                                
+                                                fieldCin.value = "";
+                                                fieldCne.value = "";
+                                                
+                                                rw1.visible = false;
+                                                rw2.visible = false;
+                                                rw3.visible = true;
+                                                rw4.visible = true;
+                                            ]]>
+                                            </attribute>
+                                        </radio>
+                                    </radiogroup>
+                                    <hbox>
+                                        <hlayout id="rw1">
+                                            <textbox id="fieldCin" constraint="no empty: Veillez indiquez une valeur" value="@{locationClientWin.premierConducteur.cin, save-when='triggerBtn.onClick'}" />
+                                        </hlayout>
+                                        <hlayout id="rw2" visible="false">
+                                            <textbox id="fieldCne" value="@{locationClientWin.premierConducteur.cne, save-when='triggerBtn.onClick'}" />
+                                        </hlayout>
+                                        <hlayout id="rw3" visible="false">
+                                            <label value="Carte de séjour"/>
+                                            <textbox id="fieldCarteSejour" value="@{locationClientWin.premierConducteur.carteSejour, save-when='triggerBtn.onClick'}" />
+                                        </hlayout>
+                                    </hbox>
+                                    <hbox>
+                                        <hlayout id="rw4" visible="false">
+                                            <label value="Passport"/>
+                                            <textbox id="fieldNumeroPassport" value="@{locationClientWin.premierConducteur.numeroPassport, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");' hflex="1"/>
+                                        </hlayout>
+                                    </hbox>
+                                </row>
+                                <row>
+                                    <label value="Adresse Maroc"/>
+                                    <textbox id="fieldAdresseMaroc" value="@{locationClientWin.premierConducteur.adresseMaroc, save-when='triggerBtn.onClick'}" />
+                                    <label value="Adresse à l'étranger"/>
+                                    <textbox id="fieldAdresseEtranger" value="@{locationClientWin.premierConducteur.adresseEtranger, save-when='triggerBtn.onClick'}" />
+                                </row>	
+                                <row>
+                                    <label value="Ville"/>
+                                    <textbox id="fieldVille" value="@{locationClientWin.premierConducteur.ville, save-when='triggerBtn.onClick'}" />
+                                    <label value="Code postal"/>
+                                    <textbox id="fieldCodePostal" value="@{locationClientWin.premierConducteur.codePostale, save-when='triggerBtn.onClick'}" />
+                                </row>	
+                                <row>
+                                    <label value="Gsm"/>
+                                    <textbox id="fieldGsm" constraint="no empty: Veillez indiquez une valeur" value="@{locationClientWin.premierConducteur.gsm, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    <label value="Fixe"/>
+                                    <textbox id="fieldFixe" value="@{locationClientWin.premierConducteur.fixe, save-when='triggerBtn.onClick'}" />
+                                </row>												
+                                <row>
+                                    <label value="Numéro du permis"/>
+                                    <textbox id="fieldNumeroPermis" constraint="no empty: Veillez indiquez une valeur" value="@{locationClientWin.premierConducteur.numeroPermis, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    <label value="Mail"/>
+                                    <textbox id="fieldMail" constraint="/(.+@.+\.[a-z]+)?/ : Veillez Entrez une adresse mail valide" value="@{locationClientWin.premierConducteur.mail, save-when='triggerBtn.onClick'}" />
+                                </row>
+                                <row>
+                                    <label value="Nationalité"/>
+                                    <combobox id="conationalites" model="@{locationClientWin.nationalites}" selectedItem="@{locationClientWin.nationaliteOneSelected}">
+                                        <comboitem self="@{each=elementnationalite}" label="@{elementnationalite}"/>
+                                    </combobox>
+                                </row>
+                            </rows>
+                        </grid>	
+                    </groupbox>
+                    <groupbox>
+                        <caption label="Informations location" />
+                        <grid fixedLayout="true">
+                            <rows>
+                        											
+                                <row>
+                                    <label value="Date départ"/>
+                                    <datebox id="fieldDateDepart" width="100%" constraint="no empty: Veillez indiquez une valeur" format="dd/MM/yyyy HH:mm" value="@{locationClientWin.location.dateDepart, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'>
+                                        <attribute name="onChange">
+                                            <![CDATA[
+                                                fieldDateDepart.constraint = "";
+                                                fieldDateRestitution.constraint = "";
+                                                if(fieldDateDepart.value != null && fieldDateRestitution.value != null) {
+                                                    long dr = fieldDateRestitution.value.getTime();
+                                                    long dd = fieldDateDepart.value.getTime();
+                                                    int diff = (int) ((dr - dd)/(24*60*60*1000));
+                                                    fieldMontantPaye.value =  fieldPrixParJour.value * diff;
+                                                }
+                                                fieldDateDepart.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldDateRestitution.constraint = "no empty: Veillez indiquez une valeur";
+                                            ]]>
+                                        </attribute>
+                                    </datebox>
+                                    <label value="Date restitution"/>
+                                    <datebox id="fieldDateRestitution" width="100%" constraint="no empty: La date de restitution doit être après la date de départ" format="dd/MM/yyyy HH:mm" value="@{locationClientWin.location.dateRestitution, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'>
+                                        <attribute name="onChange">
+                                            <![CDATA[
+                                                fieldDateDepart.constraint = "";
+                                                fieldDateRestitution.constraint = "";
+                                                if(fieldDateDepart.value != null && fieldDateRestitution.value != null) {
+                                                    long dr = fieldDateRestitution.value.getTime();
+                                                    long dd = fieldDateDepart.value.getTime();
+                                                    int diff = (int) ((dr - dd)/(24*60*60*1000));
+                                                    fieldMontantPaye.value =  fieldPrixParJour.value * diff;
+                                                    fieldObservations.value = "Nombre de jours : " + diff;
+                                                }
+                                                fieldDateDepart.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldDateRestitution.constraint = "no empty: Veillez indiquez une valeur";
+                                            ]]>
+                                        </attribute>
+                                    </datebox>
+                                </row>												
+                        											
+                                <row>
+                                    <label value="Kilometrage de depart"/>
+                                    <intbox id="fieldKilometrageDepart" width="100%" readonly="true" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{locationClientWin.location.kilometrageDepart, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    <label value="KilometrageRetour"/>
+                                    <intbox id="fieldKilometrageRetour" width="100%" value="@{locationClientWin.location.kilometrageRetour, save-when='triggerBtn.onClick'}" />
+                                </row>												
+                                <row>
+                                    <label value="Lieu de livraison"/>
+                                    <textbox id="fieldLieuLivraison" width="100%" value="@{locationClientWin.location.lieuLivraison, save-when='triggerBtn.onClick'}" />
+                                    <label value="Lieu de reprise"/>
+                                    <textbox id="fieldLieuReprise" width="100%"  value="@{locationClientWin.location.lieuReprise, save-when='triggerBtn.onClick'}"/>
+                                </row>	
+                                <row>
+                                    <label value="Prix par jour"/>
+                                    <doublebox id="fieldPrixParJour" format="###.##" width="100%"
+                                        constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{locationClientWin.location.prixParJour, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'>
+                                        <attribute name="onChanging">
+                                            <![CDATA[
+                                                fieldDateDepart.constraint = "";
+                                                fieldDateRestitution.constraint = "";
+                                                if(fieldDateDepart.value != null && fieldDateRestitution.value != null) {
+                                                    long dr = fieldDateRestitution.value.getTime();
+                                                    long dd = fieldDateDepart.value.getTime();
+                                                    int diff = (int) ((dr - dd)/(24*60*60*1000));
+                                                    if(event.value != null && !event.value.equals("")) {
+                                                        fieldMontantPaye.value =  new Double(event.value) * diff;
+                                                    } else {
+                                                        fieldMontantPaye.value = 0.0;
+                                                    }
+                                                }
+                                                fieldDateDepart.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldDateRestitution.constraint = "no empty: Veillez indiquez une valeur";
+                                            ]]>
+                                        </attribute>
+                                    </doublebox>
+                                    <label value="Observations"/>
+                                    <textbox multiline="true" width="100%"  id="fieldObservations" value="@{locationClientWin.location.observations, save-when='triggerBtn.onClick'}" />
+                                </row>	
+                                <row>
+                                    <label value="Montant payé"/>
+                                    <doublebox id="fieldMontantPaye" width="100%" format="###.##" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{locationClientWin.location.montantPaye, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    <label value="Mode de paiment"/>
+                                    <textbox id="fieldModePaiment" value="@{locationClientWin.location.modePaiment, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                </row>												
+                                <row>
+                                    <label value="Voiture" />
+                                    <combobox id="covoitures" model="@{locationClientWin.voitures}" 
+                                        selectedItem="@{locationClientWin.voitureSelected}" 
+                                        onOk="locationClientWin.changerDeVoiture()" 
+                                        onSelect="locationClientWin.changerDeVoiture()" >
+                                        <comboitem self="@{each=elementvoiture}" label="@{elementvoiture}"/>
+                                    </combobox>
+                                    <label value="Agent loueur" />
+                                    <combobox id="coagentLoueurResponsables" model="@{locationClientWin.agentLoueurResponsables}" selectedItem="@{locationClientWin.agentLoueurResponsableSelected}">
+                                        <comboitem self="@{each=elementagentLoueurResponsable}" label="@{elementagentLoueurResponsable}"/>
+                                    </combobox>
+                                </row>												
+                            </rows>
+                        </grid>
+                    </groupbox>
+                    
+                </tabpanel>
+                <tabpanel>
+                    <groupbox id="gbSecond" open="false">
+                        <caption>
+                            <checkbox id="checkSecond" label="Deuxième conducteur" checked="false" >
+                                <attribute name="onCheck">
+                             <![CDATA[
+                                gbSecond.open = self.checked;
+                                if(self.checked) {
+                                    fieldNombis.constraint = "no empty: Veillez indiquez une valeur";
+                                    fieldPrenombis.constraint = "no empty: Veillez indiquez une valeur";
+                                    fieldGsmbis.constraint = "no empty: Veillez indiquez une valeur";
+                                    
+                                } else {
+                                    fieldNombis.constraint = "";
+                                    fieldPrenombis.constraint = "";
+                                    fieldCinbis.constraint = "";
+                                    fieldGsmbis.constraint = "";
+                                    fieldNumeroPermisbis.constraint = "";
+                                    fieldCnebis.constraint = "";
+                                    fieldCarteSejourbis.constraint = "";
+                                    fieldNumeroPassportbis.constraint = "";
+                                }
+                             ]]>
+                                </attribute>
+                            </checkbox>
+                        </caption>
+                        <grid fixedLayout="true">
+                            <rows>
+						
+                                <row>
+                                    <label value="Nom"/>
+								 
+                                    <textbox id="fieldNombis" value="@{locationClientWin.deuxiemeConducteur.nom, save-when='triggerBtn.onClick'}" />
+                            
+                                    <label value="Prénom"/>
+								 
+                                    <textbox id="fieldPrenombis" value="@{locationClientWin.deuxiemeConducteur.prenom, save-when='triggerBtn.onClick'}" />
+                                </row>												
+			
+                                <row>
+                                    <label value="Choix identité:" />
+                                    <radiogroup>
+                                        <radio id="rcinbis" label="CIN" checked="true">
+                                            <attribute name="onCheck">
+                                            <![CDATA[
+                                                
+                                                fieldCinbis.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldCnebis.constraint = "";
+                                                fieldCarteSejourbis.constraint = "";
+                                                fieldNumeroPassportbis.constraint = "";
+                                                
+                                                fieldCnebis.value = "";
+                                                fieldCarteSejourbis.value = "";
+                                                fieldNumeroPassportbis.value = "";
+                                                
+                                                rw1bis.visible = true;
+                                                rw2bis.visible = false;
+                                                rw3bis.visible = false;
+                                                rw4bis.visible = false;
+                                            ]]>
+                                            </attribute>
+                                        </radio>
+                                        <radio id="rcnebis" label="CNE">
+                                            <attribute name="onCheck">
+                                            <![CDATA[
+                                            
+                                                fieldCinbis.constraint = "";
+                                                fieldCnebis.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldCarteSejourbis.constraint = "";
+                                                fieldNumeroPassportbis.constraint = "";
+                                                
+                                                fieldCinbis.value = "";
+                                                fieldCarteSejourbis.value = "";
+                                                fieldNumeroPassportbis.value = "";
+                                                
+                                                rw1bis.visible = false;
+                                                rw2bis.visible = true;
+                                                rw3bis.visible = false;
+                                                rw4bis.visible = false;
+                                            ]]>
+                                            </attribute>
+                                        </radio>
+                                        <radio id="rcsbis" label="CS + Passport" >
+                                            <attribute name="onCheck">
+                                            <![CDATA[
+                                            
+                                                fieldCinbis.constraint = "";
+                                                fieldCnebis.constraint = "";
+                                                fieldCarteSejourbis.constraint = "";
+                                                fieldNumeroPassportbis.constraint = "";
+                                                
+                                                fieldCinbis.value = "";
+                                                fieldCnebis.value = "";
+                                                
+                                                rw1bis.visible = false;
+                                                rw2bis.visible = false;
+                                                rw3bis.visible = true;
+                                                rw4bis.visible = true;
+                                            ]]>
+                                            </attribute>
+                                        </radio>
+                                    </radiogroup>
+                                    <hbox>
+                                        <hlayout id="rw1bis">
+                                            <textbox id="fieldCinbis" value="@{locationClientWin.deuxiemeConducteur.cin, save-when='triggerBtn.onClick'}" />
+                                        </hlayout>
+                                        <hlayout id="rw2bis" visible="false">
+                                            <textbox id="fieldCnebis" value="@{locationClientWin.deuxiemeConducteur.cne, save-when='triggerBtn.onClick'}" />
+                                        </hlayout>
+                                        <hlayout id="rw3bis" visible="false">
+                                            <label value="Carte de séjour"/>
+                                            <textbox id="fieldCarteSejourbis" value="@{locationClientWin.deuxiemeConducteur.carteSejour, save-when='triggerBtn.onClick'}" />
+                                        </hlayout>
+                                    </hbox>
+                                    <hbox>
+                                        <hlayout id="rw4bis" visible="false">
+                                            <label value="Passport"/>
+                                            <textbox id="fieldNumeroPassportbis" value="@{locationClientWin.deuxiemeConducteur.numeroPassport, save-when='triggerBtn.onClick'}" hflex="1"/>
+                                        </hlayout>
+                                    </hbox>
+                                </row>
+                                <row>
+                                    <label value="Adresse Maroc"/>
+                                    <textbox id="fieldAdresseMarocbis" value="@{locationClientWin.deuxiemeConducteur.adresseMaroc, save-when='triggerBtn.onClick'}" />
+                                    <label value="Adresse à l'étranger"/>
+                                    <textbox id="fieldAdresseEtrangerbis" value="@{locationClientWin.deuxiemeConducteur.adresseEtranger, save-when='triggerBtn.onClick'}" />
+                                </row>	
+                                <row>
+                                    <label value="Ville"/>
+                                    <textbox id="fieldVillebis" value="@{locationClientWin.deuxiemeConducteur.ville, save-when='triggerBtn.onClick'}" />
+                                    <label value="Code postal"/>
+                                    <textbox id="fieldCodePostalbis" value="@{locationClientWin.deuxiemeConducteur.codePostale, save-when='triggerBtn.onClick'}" />
+                                </row>	
+                                <row>
+                                    <label value="Gsm"/>
+                                    <textbox id="fieldGsmbis" value="@{locationClientWin.deuxiemeConducteur.gsm, save-when='triggerBtn.onClick'}" />
+                                    <label value="Fixe"/>
+                                    <textbox id="fieldFixebis" value="@{locationClientWin.deuxiemeConducteur.fixe, save-when='triggerBtn.onClick'}" />
+                                </row>												
+                                <row>
+                                    <label value="Numéro du permis"/>
+                                    <textbox id="fieldNumeroPermisbis" value="@{locationClientWin.deuxiemeConducteur.numeroPermis, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    <label value="Mail"/>
+                                    <textbox id="fieldMailbis" constraint="/(.+@.+\.[a-z]+)?/ : Veillez Entrez une adresse mail valide" value="@{locationClientWin.deuxiemeConducteur.mail, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                </row>
+                                <row>
+                                    <label value="Nationalité"/>
+                                    <combobox id="conationalitesbis" model="@{locationClientWin.nationalites}" selectedItem="@{locationClientWin.nationaliteTowSelected}">
+                                        <comboitem self="@{each=elementnationalitebis}" label="@{elementnationalitebis}"/>
+                                    </combobox>
+                                </row>
+                            </rows>
+                        </grid>	
+                    </groupbox>
+                </tabpanel>
+                <tabpanel>
+                    <grid>
+                        <rows>
+                            <row>
+                                <panel title="Contrat numérisée" open="true" border="normal" collapsible="true">
+                                    <panelchildren>
+                                        <grid fixedLayout="true" >
+                                            <rows>
+                                                <row>
+                                                    <label value="Contrat"/>
+                                                    <fileupload  id="btnUploadContrat" label="Charger" onUpload="locationClientWin.updateImageContrat(event.getMedia())" />                                    
+                                                </row>                            
+                                                <row>
+                                                    <label value="Apperçu"/>								 
+                                                    <image id="appercuContrat" width="90px" height="90px" onClick="if(self.content != null)locationClientWin.zoomerImage(self.content)"/>
+                                                </row>												
+                                
+                                            </rows>
+                                        </grid>					
+                                    </panelchildren>
+                                </panel>	
+                                <panel title="Déclaration préalable numerisée" open="true" border="normal" collapsible="true">
+                                    <panelchildren>
+                                        <grid fixedLayout="true" >
+                                            <rows>
+                                                <row>
+                                                    <label value="Déclaration"/>
+                                                    <fileupload  id="btnUploadDeclaration" label="Charger" onUpload="locationClientWin.updateImageDeclaration(event.getMedia())" />                                    
+                                                </row>                            
+                                                <row>
+                                                    <label value="Apperçu"/>								 
+                                                    <image id="appercuDeclaration" width="90px" height="90px" onClick="if(self.content != null)locationClientWin.zoomerImage(self.content)"/>
+                                                </row>												
+                                            </rows>
+                                        </grid>					
+                                    </panelchildren>
+                                </panel> 
+                            </row>
+                        </rows>
+                    </grid>
+                </tabpanel>
+                
+            </tabpanels>
+        </tabbox>
+<!--        <separator/>-->
+        <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationClientWin.ok(); " label="Sauveguarder" image="/images/skin/database_save.png"/>
+        <button visible="false" id="triggerBtn" onBindingValidate=""/>
+        
+    </window>
+</zk>

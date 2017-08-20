@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./entretienPeriodiqueWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+    <window id="entretienPeriodiqueWin" height="100%" width="100%" style="margin:auto;" use="${entretienPeriodiqueWindow}">
+    <!-- <zscript src="/zs/entretienPeriodique.zs"/> -->
+        <borderlayout>
+            <west id="westPanel" title="Gestion d'enregistrement" size="40%" flex="true" splittable="true" collapsible="true" open="false">
+                <groupbox id="gbCrud" width="100%" height="100%">
+                    
+                    <grid fixedLayout="true">
+                        <rows>		
+                            <row>
+                                <label value="Date entretien"/>
+								 
+                                <datebox id="fieldDateEntretien"
+                                         constraint="no empty: Veillez indiquez une valeur" width="100%"
+                                         format="dd/MM/yyyy" value="@{entretienPeriodiqueWin.objet.dateEntretien, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+
+                            <row>
+                                <label value="Détails"/>
+								 
+                                <textbox id="fieldDetails" multiline="true" height="100px" width="100%"
+                                         value="@{entretienPeriodiqueWin.objet.details, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+						
+                            <row>
+                                <label value="Montant"/>
+								 
+                                <doublebox id="fieldMontant" format="###.##"
+                                           constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{entretienPeriodiqueWin.objet.montant, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+
+                            <row>
+                                <label value="Paiement effectué :" />
+                                <checkbox id="fieldPaiementEffectue" label="?" disabled="@{entretienPeriodiqueWin.objet.paiementEffectue}" checked="@{entretienPeriodiqueWin.objet.paiementEffectue, save-when='triggerBtn.onClick'}"/>
+                            </row>
+                        </rows>
+                    </grid>
+                    <grid fixedLayout="true" >
+                        <rows>
+                            <row>
+                                <label value="Voiture" />
+                                <combobox id="covoitures" model="@{entretienPeriodiqueWin.voitures}" selectedItem="@{entretienPeriodiqueWin.voitureSelected}">
+                                    <comboitem self="@{each=elementvoiture}" label="@{elementvoiture}"/>
+                                </combobox>
+                            </row>
+                            <row>
+                                <label value="Type" />
+                                <combobox id="cotypeEntretienPeriodiques" model="@{entretienPeriodiqueWin.typeEntretienPeriodiques}" selectedItem="@{entretienPeriodiqueWin.typeEntretienPeriodiqueSelected}">
+                                    <comboitem self="@{each=elementtypeEntretienPeriodique}" label="@{elementtypeEntretienPeriodique}"/>
+                                </combobox>
+                            </row>
+                            <row>
+                                <label value="Kilométrage prochaine entretien"/>
+                                <intbox id="fieldkilometrageProchaineEntretien" width="100%" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{entretienPeriodiqueWin.objet.kilometrageProchaineEntretien, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+                        </rows>
+                    </grid>
+                  
+                    <separator />
+                    <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));entretienPeriodiqueWin.add()" label="Sauveguarder" image="/images/skin/database_save.png"/>
+                    <button id="btnUpdate" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));entretienPeriodiqueWin.update()" label="Modifier" image="/images/skin/database_edit.png" visible="false"/>
+                    <button id="btnDelete" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));entretienPeriodiqueWin.delete()" label="Supprimer" image="/images/skin/database_delete.png" visible="false"/>
+                    <!-- <button id="btnNew" onClick="entretienPeriodiqueWin.newRecord()" label="Nouveau enregistrement" image="/images/skin/database_add.png"/> -->
+                    <button id="btnCancel" onClick="entretienPeriodiqueWin.cancel()" label="Annuler" image="/images/skin/cancel.png" visible="false"/>
+                    <button visible="false" id="triggerBtn" onBindingValidate=""/>
+                </groupbox>
+            </west>
+            <center border="none" flex="true">
+                <groupbox width="100%" height="100%">
+                    <listbox id="lstObjet" onSelect="entretienPeriodiqueWin.select()" model="@{entretienPeriodiqueWin.listeObjets}" selectedItem="@{entretienPeriodiqueWin.objetSelected}"  width="100%" height="100%" mold="paging" paginal="${paging}">
+                        <auxhead sclass="category-center">
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <combobox id="filtervoiture" model="@{entretienPeriodiqueWin.voitures}" selectedItem="@{entretienPeriodiqueWin.filtre.voiture}" autocomplete="true" autodrop="true" mold="rounded" onSelect="entretienPeriodiqueWin.ofs=0;entretienPeriodiqueWin.filtrer()" onOK="entretienPeriodiqueWin.ofs=0;entretienPeriodiqueWin.filtrer()">
+                                    <comboitem self="@{each=elementfiltrevoiture}" label="@{elementfiltrevoiture}"/>
+                                </combobox>
+                            </auxheader>
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <combobox id="filtertypeEntretienPeriodique" model="@{entretienPeriodiqueWin.typeEntretienPeriodiques}" selectedItem="@{entretienPeriodiqueWin.filtre.typeEntretienPeriodique}" autocomplete="true" autodrop="true" mold="rounded" onSelect="entretienPeriodiqueWin.ofs=0;entretienPeriodiqueWin.filtrer()" onOK="entretienPeriodiqueWin.ofs=0;entretienPeriodiqueWin.filtrer()">
+                                    <comboitem self="@{each=elementfiltretypeEntretienPeriodique}" label="@{elementfiltretypeEntretienPeriodique}"/>
+                                </combobox>
+                            </auxheader>
+                             
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <datebox id="filterDateEntretien" format="dd/MM/yyyy" width="90%"
+                                         value="@{entretienPeriodiqueWin.filtre.dateEntretien}" 
+                                         onOK="entretienPeriodiqueWin.ofs=0; entretienPeriodiqueWin.filtrer(); self.focus();"/>
+                            </auxheader>
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterDetails" value="@{entretienPeriodiqueWin.filtre.details}" onChanging="entretienPeriodiqueWin.ofs=0; entretienPeriodiqueWin.filtre.details=event.value; entretienPeriodiqueWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="90%"/>
+                            </auxheader>
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <doublebox id="filterMontant" format="###.##" value="@{entretienPeriodiqueWin.filtre.montant}" width="100%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        entretienPeriodiqueWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(entretienPeriodiqueWin.filtre.montant != null) {
+                                                entretienPeriodiqueWin.filtre.montant = null;
+                                            }
+                                        } else {
+                                            entretienPeriodiqueWin.filtre.montant=new Double(event.value);
+                                        }
+                                        entretienPeriodiqueWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute>
+                                </doublebox>
+                            </auxheader>
+
+                            <auxheader colspan="1">
+<!--                                <checkbox id="filterPaiementEffectue" label="Paiement efféctue" checked="@{entretienPeriodiqueWin.filtre.paiementEffectue}" onCheck="entretienPeriodiqueWin.ofs; entretienPeriodiqueWin.filtrer(); entretienPeriodiqueWin.focus();"/>-->
+                                <combobox id="filterPaiementEffectue" readonly="true" width="90%">
+                                    <attribute name="onCreate">
+                                        <![CDATA[
+                                            List l = new ArrayList();
+                                            l.add("Oui/Non");
+                                            l.add("Oui");
+                                            l.add("Non");
+                                            ListModelList lm = new ListModelList(l);
+                                            lm.addSelection(lm.get(0));
+                                            self.setModel(lm);
+                                        ]]>
+                                    </attribute>
+                                    <attribute name="onChange">
+                                        <![CDATA[
+                                            if(self.selectedIndex == 0) {
+                                                //entretienPeriodiqueWin.filtre.paiementEffectue = null;
+                                            } else if(self.selectedIndex == 1) {
+                                                entretienPeriodiqueWin.filtre.paiementEffectue = true;
+                                            } else {
+                                                entretienPeriodiqueWin.filtre.paiementEffectue = false;
+                                            }                                            
+                                            entretienPeriodiqueWin.ofs=0;
+                                            entretienPeriodiqueWin.filtrer();
+                                            entretienPeriodiqueWin.focus();
+                                        ]]>
+                                    </attribute>
+                                </combobox>  
+                            </auxheader>
+						 
+                        </auxhead>
+                        <listhead sizable="true">
+						
+                            <listheader label="Voiture" sort="auto(voiture)" onSort="entretienPeriodiqueWin.sort(event)"/>
+                            
+                            <listheader label="Type Entretien Périodique" sort="auto(typeEntretienPeriodique)" onSort="entretienPeriodiqueWin.sort(event)"/>
+                                                
+                            <listheader label="Date entretien" sort="auto(dateEntretien)" onSort="entretienPeriodiqueWin.sort(event)"/>
+							
+                            <listheader label="Détails" sort="auto(details)" onSort="entretienPeriodiqueWin.sort(event)"/>
+						
+                            <listheader label="Montant" sort="auto(montant)" onSort="entretienPeriodiqueWin.sort(event)"/>
+
+                            <listheader label="Régelement effectué" sort="auto(paiementEffectue)" onSort="fcpWin.sort(event)" align="center"/>
+							                                 
+                        </listhead>
+                        <listitem self="@{each=element}">
+                            
+                            <listcell label="@{element.voiture}"/>
+                            
+                            <listcell label="@{element.typeEntretienPeriodique}"/>
+                            
+                            <listcell>
+                                <datebox value="@{element.dateEntretien}" format="dd/MM/yyyy" width="90%" buttonVisible="false" readonly="true"/>
+                            </listcell>
+							
+                            <listcell label="@{element.details}"/>
+						
+                            <listcell>
+                                <doublebox format="###.##" value="@{element.montant}" readonly="true" width="90%"/>
+                            </listcell>
+
+                            <listcell>
+                                <checkbox checked="@{element.paiementEffectue}" disabled="true"/>
+                            </listcell>
+							     
+                        </listitem>
+                    </listbox>
+                    <paging id="paging" totalSize="@{entretienPeriodiqueWin.tailleListe}" pageSize="@{entretienPeriodiqueWin.maxNb}" onPaging="entretienPeriodiqueWin.getNextElements(event);" />
+                    <separator/>
+                    <button id="btnNew" onClick="entretienPeriodiqueWin.newRecord()" label="Nouveau" image="/images/skin/database_add.png"/>
+                </groupbox>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

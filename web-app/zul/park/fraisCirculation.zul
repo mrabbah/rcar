@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./fraisCirculationWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+    <window id="fraisCirculationWin" height="100%" width="100%" style="margin:auto;" use="${fraisCirculationWindow}">
+    <!-- <zscript src="/zs/fraisCirculation.zs"/> -->
+        <borderlayout>
+            <west id="westPanel" title="Gestion d'enregistrement" size="40%" flex="true" splittable="true" collapsible="true" open="false">
+                <groupbox id="gbCrud" width="100%" height="100%">
+                    <grid fixedLayout="true">
+                        <rows>
+						
+                            <row>
+                                <label value="Date"/>
+								 
+                                <datebox id="fieldDate" width="100%" constraint="no empty: Veillez indiquez une valeur" format="dd/MM/yyyy" value="@{fraisCirculationWin.objet.date, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>												
+						
+                            <row>
+                                <label value="Détails"/>
+								 
+                                <textbox id="fieldDetails" multiline="true" width="100%" height="100px" value="@{fraisCirculationWin.objet.details, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>												
+						
+                            <row>
+                                <label value="Montant"/>
+								 
+                                <doublebox id="fieldMontant" format="###.##" width="100%" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{fraisCirculationWin.objet.montant, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>												
+						                              
+                        </rows>
+                    </grid>					
+					
+                    <separator />
+
+                    <grid fixedLayout="true" >
+                        <rows>
+                            <row>
+                                <label value="Voiture" />
+                                <combobox id="covoitures" model="@{fraisCirculationWin.voitures}" selectedItem="@{fraisCirculationWin.voitureSelected}">
+                                    <comboitem self="@{each=elementvoiture}" label="@{elementvoiture}"/>
+                                </combobox>
+                            </row>
+                            <row>
+                                <label value="Type" />
+                                <combobox id="cotypeFraisCirculations" model="@{fraisCirculationWin.typeFraisCirculations}" selectedItem="@{fraisCirculationWin.typeFraisCirculationSelected}">
+                                    <comboitem self="@{each=elementtypeFraisCirculation}" label="@{elementtypeFraisCirculation}"/>
+                                </combobox>
+                            </row>
+                        </rows>
+                    </grid>
+		
+                    <separator />
+                    <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));fraisCirculationWin.add()" label="Sauveguarder" image="/images/skin/database_save.png"/>
+                    <button id="btnUpdate" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));fraisCirculationWin.update()" label="Modifier" image="/images/skin/database_edit.png" visible="false"/>
+                    <button id="btnDelete" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));fraisCirculationWin.delete()" label="Supprimer" image="/images/skin/database_delete.png" visible="false"/>
+                    <!-- <button id="btnNew" onClick="fraisCirculationWin.newRecord()" label="Nouveau enregistrement" image="/images/skin/database_add.png"/> -->
+                    <button id="btnCancel" onClick="fraisCirculationWin.cancel()" label="Annuler" image="/images/skin/cancel.png" visible="false"/>
+                    <button visible="false" id="triggerBtn" onBindingValidate=""/>
+                </groupbox>
+            </west>
+            <center border="none" flex="true">
+                <groupbox width="100%" height="100%">
+                    <listbox id="lstObjet" onSelect="fraisCirculationWin.select()" model="@{fraisCirculationWin.listeObjets}" selectedItem="@{fraisCirculationWin.objetSelected}"  width="100%" height="100%" mold="paging" paginal="${paging}">
+                        <auxhead sclass="category-center">
+			
+                            <auxheader colspan="1">
+                                <combobox id="filtervoiture" model="@{fraisCirculationWin.voitures}" selectedItem="@{fraisCirculationWin.filtre.voiture}" autocomplete="true" autodrop="true" mold="rounded" onSelect="fraisCirculationWin.ofs=0;fraisCirculationWin.filtrer()" onOK="fraisCirculationWin.ofs=0;fraisCirculationWin.filtrer()">
+                                    <comboitem self="@{each=elementfiltrevoiture}" label="@{elementfiltrevoiture}"/>
+                                </combobox>
+                            </auxheader>
+                            
+                            <auxheader colspan="1">
+                                <combobox id="filtertypeFraisCirculation" model="@{fraisCirculationWin.typeFraisCirculations}" selectedItem="@{fraisCirculationWin.filtre.typeFraisCirculation}" autocomplete="true" autodrop="true" mold="rounded" onSelect="fraisCirculationWin.ofs=0;fraisCirculationWin.filtrer()" onOK="fraisCirculationWin.ofs=0;fraisCirculationWin.filtrer()">
+                                    <comboitem self="@{each=elementfiltretypeFraisCirculation}" label="@{elementfiltretypeFraisCirculation}"/>
+                                </combobox>
+                            </auxheader>
+                                        
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <datebox id="filterDate" format="dd/MM/yyyy" value="@{fraisCirculationWin.filtre.date}" onOK="fraisCirculationWin.ofs=0; fraisCirculationWin.filtrer(); self.focus();" width="90%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterDetails" value="@{fraisCirculationWin.filtre.details}" onChanging="fraisCirculationWin.ofs=0; fraisCirculationWin.filtre.details=event.value; fraisCirculationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <doublebox id="filterMontant" value="@{fraisCirculationWin.filtre.montant}" width="100%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        fraisCirculationWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(fraisCirculationWin.filtre.montant != null) {
+                                                fraisCirculationWin.filtre.montant = null;
+                                            }
+                                        } else {
+                                            fraisCirculationWin.filtre.montant=new Double(event.value);
+                                        }
+                                        fraisCirculationWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute>
+                                </doublebox>
+                            </auxheader>												
+						 
+                        </auxhead>
+                        <listhead sizable="true">
+                            
+                            <listheader label="Voiture" sort="auto(voiture)" onSort="fraisCirculationWin.sort(event)"/>
+                            
+                            <listheader label="Type Frais Circulation" sort="auto(typeFraisCirculation)" onSort="fraisCirculationWin.sort(event)"/>		
+							
+                            <listheader label="Date" sort="auto(date)" onSort="fraisCirculationWin.sort(event)"/>	
+							
+                            <listheader label="Détails" sort="auto(details)" onSort="fraisCirculationWin.sort(event)"/>	
+							
+                            <listheader label="Montant" sort="auto(montant)" onSort="fraisCirculationWin.sort(event)"/>	
+							                                 
+                        </listhead>
+                        <listitem self="@{each=element}">                         
+                            
+                            <listcell label="@{element.voiture}"/>
+                            
+                            <listcell label="@{element.typeFraisCirculation}"/>
+                            
+                            <listcell>
+                                <datebox value="@{element.date}" format="dd/MM/yyyy" width="90%" buttonVisible="false" readonly="true"/>
+                            </listcell>
+							
+                            <listcell label="@{element.details}"/>
+							
+                            <listcell>
+                                <doublebox format="###.##" value="@{element.montant}" readonly="true" width="90%"/>
+                            </listcell>
+							     
+                        </listitem>
+                    </listbox>
+                    <paging id="paging" totalSize="@{fraisCirculationWin.tailleListe}" pageSize="@{fraisCirculationWin.maxNb}" onPaging="fraisCirculationWin.getNextElements(event);" />
+                    <separator/>
+                    <button id="btnNew" onClick="fraisCirculationWin.newRecord()" label="Nouveau" image="/images/skin/database_add.png"/>
+                </groupbox>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

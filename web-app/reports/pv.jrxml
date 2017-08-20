@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pv" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.6500000000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="ParBackground" class="java.io.InputStream"/>
+	<field name="premierConducteur.nom" class="java.lang.String"/>
+	<field name="premierConducteur.prenom" class="java.lang.String"/>
+	<field name="premierConducteur.nationalite" class="java.lang.String"/>
+	<field name="premierConducteur.adresseMaroc" class="java.lang.String"/>
+	<field name="premierConducteur.adresseEtranger" class="java.lang.String"/>
+	<field name="premierConducteur.fixe" class="java.lang.String"/>
+	<field name="premierConducteur.gsm" class="java.lang.String"/>
+	<field name="premierConducteur.cne" class="java.lang.String"/>
+	<field name="premierConducteur.cin" class="java.lang.String"/>
+	<field name="premierConducteur.numeroPermis" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.nom" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.prenom" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.nationalite" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.adresseMaroc" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.adresseEtranger" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.fixe" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.gsm" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.cne" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.cin" class="java.lang.String"/>
+	<field name="deuxiemeConducteur.numeroPermis" class="java.lang.String"/>
+	<field name="voiture.model.libelle" class="java.lang.String"/>
+	<field name="voiture.immatriculation" class="java.lang.String"/>
+	<field name="dateDepart" class="java.util.Date"/>
+	<field name="dateRestitution" class="java.util.Date"/>
+	<field name="kilometrageDepart" class="java.lang.Integer"/>
+	<field name="kilometrageRetour" class="java.lang.Integer"/>
+	<field name="lieuLivraison" class="java.lang.String"/>
+	<field name="lieuReprise" class="java.lang.String"/>
+	<field name="observations" class="java.lang.String"/>
+	<field name="prixParJour" class="java.lang.Double"/>
+	<field name="montantPaye" class="java.lang.Double"/>
+	<field name="modePaiment" class="java.lang.String"/>
+	<field name="agentLoueurResponsable.userRealName" class="java.lang.String"/>
+	<variable name="duree_de_location" class="java.lang.Integer">
+		<variableExpression><![CDATA[$F{dateRestitution} - $F{dateDepart}]]></variableExpression>
+	</variable>
+	<variable name="prix_total_ht" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{duree_de_location} * $F{prixParJour}]]></variableExpression>
+	</variable>
+	<variable name="reste" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{prix_total_ht} - $F{montantPaye}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<image>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="802"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{ParBackground}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="101" y="129" width="100" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premierConducteur.nom}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="201" y="130" width="78" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premierConducteur.prenom}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="82" y="156" width="197" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premierConducteur.nationalite}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="105" y="170" width="174" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premierConducteur.adresseMaroc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="115" y="183" width="164" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premierConducteur.adresseEtranger}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="49" y="196" width="96" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{premierConducteur.fixe}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="182" y="197" width="97" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premierConducteur.gsm}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="59" y="223" width="66" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premierConducteur.cin}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="89" y="238" width="36" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{premierConducteur.numeroPermis}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="133" y="265" width="46" height="13"/>
+				<textElement markup="none">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[voiture]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="293" y="133" width="100" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.nom}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="393" y="133" width="95" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.prenom}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="293" y="173" width="195" height="17"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.adresseMaroc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="293" y="187" width="195" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.adresseEtranger}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="293" y="201" width="100" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.fixe}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="403" y="201" width="100" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.gsm}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="411" y="229" width="61" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.cin}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="411" y="242" width="61" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.numeroPermis}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="101" y="283" width="100" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{voiture.model.libelle}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="101" y="301" width="100" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{voiture.immatriculation}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="321" width="110" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd-MM-yyyy HH:mm").format($F{dateDepart})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="341" width="110" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new SimpleDateFormat("dd-MM-yyyy HH:mm").format($F{dateRestitution})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="341" width="110" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kilometrageRetour}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="361" width="110" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{kilometrageDepart}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="381" width="110" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{kilometrageRetour}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="401" width="110" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lieuLivraison}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="421" width="110" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{lieuReprise}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="292" y="576" width="235" height="19"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observations}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="477" width="115" height="12"/>
+				<textElement verticalAlignment="Top">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prixParJour}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="417" y="160" width="77" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deuxiemeConducteur.nationalite}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="490" width="115" height="12"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{duree_de_location}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="504" width="115" height="13"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{prix_total_ht}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="570" width="115" height="25"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{reste}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="557" width="115" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{montantPaye}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="125" y="585" width="115" height="13"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{prix_total_ht}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="645" width="165" height="14"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{modePaiment}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="115" y="679" width="164" height="20"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{agentLoueurResponsable.userRealName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

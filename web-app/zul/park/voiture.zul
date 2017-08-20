@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./voitureWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+    <style>div.minimize {
+        border: 1px solid #79858E;
+        background: #D3E1EC;
+        position: absolute;
+        opacity: 0.8;
+        z-index: 999999;
+        }
+    </style>
+    <script type="text/javascript"><![CDATA[
+        function flowDown(wleft, wtop) {
+            var w = jq('$voitureWin'), b = jq('$lstObjet');
+            //Minimize from the Window to the order button
+            jq('<div class="minimize" />').appendTo("body").css({
+                left : wleft,
+                top : wtop,
+                width : w.width(),
+                height : 10
+            });
+            p = b.offset();
+            jq('.minimize').animate({
+                left : p.left + b.width() / 2,
+                top : p.top + b.height() / 2,
+                width : 0,
+                height : 0
+            }, function() {
+                jq(this).remove();
+            });
+        }
+        ]]>
+    </script>
+    <window id="voitureWin" height="100%" width="100%" style="margin:auto;" use="${voitureWindow}">
+    <!-- <zscript src="/zs/voiture.zs"/> -->
+        <borderlayout>
+            <north id="eastPanel" size="65px" open="true"  title="Recherche avancée" flex="true" splittable="true"  collapsible="true" >
+                <hlayout spacing="10px" style="margin-top:9px;margin-left:10px">
+					
+                    <label value="Modèle :" />
+                    <combobox id="filtermodel" model="@{voitureWin.models}" selectedItem="@{voitureWin.filtre.model}" autocomplete="true" autodrop="true" mold="rounded" onSelect="voitureWin.ofs=0;voitureWin.filtrer()" onOK="voitureWin.ofs=0;voitureWin.filtrer()">
+                        <comboitem self="@{each=elementfiltremodel}" label="@{elementfiltremodel}"/>
+                    </combobox>
+					
+                    <label value="Energie :" />
+                    <combobox id="filterenergie" model="@{voitureWin.energies}" selectedItem="@{voitureWin.filtre.energie}" autocomplete="true" autodrop="true" mold="rounded" onSelect="voitureWin.ofs=0;voitureWin.filtrer()" onOK="voitureWin.ofs=0;voitureWin.filtrer()">
+                        <comboitem self="@{each=elementfiltreenergie}" label="@{elementfiltreenergie}"/>
+                    </combobox>
+                    <label value="Afficher la liste des voitures : "/>
+                    <checkbox id="filtervendue" label="vendues" checked="@{voitureWin.voitureVendue}" onCheck="voitureWin.filtrer();"/>
+
+                    <checkbox id="filtersousTraite" label="Sous Traitées" checked="@{voitureWin.voitureSousTraite}" onCheck="voitureWin.filtrer();"/>
+										                    
+                </hlayout>
+            </north>
+            <west id="westPanel" title="Gestion d'enregistrement" size="40%" flex="true" splittable="true" collapsible="true" open="false">
+                <groupbox id="gbCrud" width="100%" height="100%">
+                    <grid fixedLayout="true">
+                        <rows>
+						
+                            <row>
+                                <label value="Immatriculation"/>
+								 
+                                <textbox id="fieldImmatriculation" width="100%" constraint="no empty: Veillez indiquez une valeur" value="@{voitureWin.objet.immatriculation, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>												
+						
+                            <row>
+                                <label value="Date Mise En Circulation"/>
+								 
+                                <datebox id="fieldDateMiseEnCirculation" width="100%" constraint="no empty: Veillez indiquez une valeur" format="dd/MM/yyyy" value="@{voitureWin.objet.dateMiseEnCirculation, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+                            <row>
+                                <label value="Date décision"/>
+                                <datebox id="fieldDateDecision" width="100%" constraint="no empty: Veillez indiquez une valeur" format="dd/MM/yyyy" value="@{voitureWin.objet.dateDecision, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+                            <row id="rwVendu" visible="false">
+                                <label value="Vendu" />
+                                
+                                <checkbox id="fieldVendu" label="?" checked="@{voitureWin.objet.vendu, save-when='triggerBtn.onClick'}"/>
+                            </row>
+				
+                            <row>
+                                <label value="Sous Traité" />
+                                
+                                <checkbox id="fieldSousTraite" label="?" checked="@{voitureWin.objet.sousTraite, save-when='triggerBtn.onClick'}"/>
+                            </row> 
+		
+                            <row>
+                                <label value="Kilométrage"/>
+								 
+                                <intbox id="fieldKilometrage" width="100%" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{voitureWin.objet.kilometrage, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>												
+						
+                            <row>
+                                <label value="Prix journalier"/>
+								 
+                                <doublebox id="fieldPrixLocation" format="###.##" width="100%" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{voitureWin.objet.prixLocation, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>												
+			                              
+                        </rows>
+                    </grid>					
+                    <separator />
+                    <grid fixedLayout="true" >
+                        <rows>
+                            <row>
+                                <label value="Modèle" />
+                                <combobox id="comodels" model="@{voitureWin.models}" selectedItem="@{voitureWin.modelSelected}">
+                                    <comboitem self="@{each=elementmodel}" label="@{elementmodel}"/>
+                                </combobox>
+                            </row>
+                            <row>
+                                <label value="Energie" />
+                                <combobox id="coenergies" model="@{voitureWin.energies}" selectedItem="@{voitureWin.energieSelected}">
+                                    <comboitem self="@{each=elementenergie}" label="@{elementenergie}"/>
+                                </combobox>
+                            </row>
+                        </rows>
+                    </grid>
+                    <separator />
+                    <panel title="Photo" open="false" border="normal" collapsible="true">
+                        <panelchildren>
+                            <grid fixedLayout="true" >
+                                <rows>
+                                    <row>
+                                        <label value="Photo"/>
+                                        <fileupload  id="btnUpload" label="Charger" onUpload="voitureWin.updatePhotoVoiture(event.getMedia())" />
+                                    </row>                            
+                                    <row>
+                                        <label value="Apperçu"/>								 
+                                        <image id="appercuPhoto" width="90px" height="90px" onClick="if(self.content != null)voitureWin.zoomerImage(self.content)"/>
+                                    </row>												
+                                
+                                </rows>
+                            </grid>					
+                        </panelchildren>
+                    </panel>
+                    <panel title="Décision numérisée" open="false" border="normal" collapsible="true">
+                        <panelchildren>
+                            <grid fixedLayout="true" >
+                                <rows>
+                                    <row>
+                                        <label value="Decision"/>
+                                        <fileupload  id="btnUploadD" label="Charger" onUpload="voitureWin.updateImageDecision(event.getMedia())" />
+                                    </row>
+                                    <row>
+                                        <label value="Apperçu"/>
+                                        <image id="appercuDecision" width="90px" height="90px" onClick="if(self.content != null)voitureWin.zoomerImage(self.content)"/>
+                                    </row>
+
+                                </rows>
+                            </grid>
+                        </panelchildren>
+                    </panel>
+                    <separator />
+                    <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));voitureWin.add()" label="Sauveguarder" image="/images/skin/database_save.png"/>
+                    <button id="btnUpdate" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));voitureWin.update()" label="Modifier" image="/images/skin/database_edit.png" visible="false"/>
+                    <button id="btnDelete" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));voitureWin.delete()" label="Supprimer" image="/images/skin/database_delete.png" visible="false"/>
+                    <!-- <button id="btnNew" onClick="voitureWin.newRecord()" label="Nouveau enregistrement" image="/images/skin/database_add.png"/> -->
+                    <button id="btnCancel" onClick="voitureWin.cancel()" label="Annuler" image="/images/skin/cancel.png" visible="false"/>
+                    <button visible="false" id="triggerBtn" onBindingValidate=""/>
+                </groupbox>
+            </west>
+            <center border="none" flex="true">
+                <groupbox width="100%" height="100%">
+                    <listbox id="lstObjet" onSelect="voitureWin.select()" model="@{voitureWin.listeObjets}" selectedItem="@{voitureWin.objetSelected}"  width="100%" height="100%" mold="paging" paginal="${paging}">
+                        <auxhead sclass="category-center">
+							 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterImmatriculation" value="@{voitureWin.filtre.immatriculation}" onChanging="voitureWin.ofs=0; voitureWin.filtre.immatriculation=event.value; voitureWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="90%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <datebox id="filterDateMiseEnCirculation" format="dd/MM/yyyy" value="@{voitureWin.filtre.dateMiseEnCirculation}" onOK="voitureWin.ofs=0; voitureWin.filtrer(); self.focus();" width="90%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <intbox id="filterKilometrage" value="@{voitureWin.filtre.kilometrage}" width="90%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        voitureWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(voitureWin.filtre.kilometrage != null) {
+                                                voitureWin.filtre.kilometrage = null;
+                                            }
+                                        } else {
+                                            voitureWin.filtre.kilometrage=new Integer(event.value);
+                                        }
+                                        voitureWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute>
+                                </intbox>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <doublebox id="filterPrixLocation" value="@{voitureWin.filtre.prixLocation}" width="90%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        voitureWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(voitureWin.filtre.prixLocation != null) {
+                                                voitureWin.filtre.prixLocation = null;
+                                            }
+                                        } else {
+                                            voitureWin.filtre.prixLocation=new Double(event.value);
+                                        }
+                                        voitureWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute>
+                                </doublebox>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <button image="/images/skin/ClientSideAction-24x24.png" height="30px" width="100%" onClick="eastPanel.open = !eastPanel.open" />
+                            </auxheader>												
+						 
+                        </auxhead>
+                        <listhead sizable="true">
+							
+                            <listheader label="Immatriculation" sort="auto(immatriculation)" onSort="voitureWin.sort(event)"/>	
+							
+                            <listheader label="Date Mise En Circulation" sort="auto(dateMiseEnCirculation)" onSort="voitureWin.sort(event)"/>	
+							
+                            <listheader label="Kilométrage" sort="auto(kilometrage)" onSort="voitureWin.sort(event)"/>	
+							
+                            <listheader label="Prix journalier" sort="auto(prixLocation)" onSort="voitureWin.sort(event)"/>	
+							
+                            <listheader label="Photo" width="100px"/>	
+							                                 
+                        </listhead>
+                        <listitem self="@{each=element}">                         
+                            
+                            <listcell label="@{element.immatriculation}"/>
+							
+                            <listcell>
+                                <datebox value="@{element.dateMiseEnCirculation}" format="dd/MM/yyyy" width="90%" buttonVisible="false" readonly="true"/>
+                            </listcell>
+							
+                            <listcell>
+                                <intbox value="@{element.kilometrage}" readonly="true" width="90%"/>
+                            </listcell>
+							
+                            <listcell>
+                                <doublebox format="###.##" value="@{element.prixLocation}" readonly="true" width="90%"/>
+                            </listcell>
+                                
+                            <listcell>                                
+                                <image content="@{element.trans_photo}" width="80px" height="80px"/>		     
+                            </listcell>			
+							     
+                        </listitem>
+                    </listbox>
+                    <paging id="paging" totalSize="@{voitureWin.tailleListe}" pageSize="@{voitureWin.maxNb}" onPaging="voitureWin.getNextElements(event);" />
+                    <separator/>
+                    <button id="btnNew" onClick="voitureWin.newRecord()" label="Nouveau" image="/images/skin/database_add.png"/>
+                </groupbox>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

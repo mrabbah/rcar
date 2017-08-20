@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./typeFraisCirculationPeriodiqueWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+    <window id="typeFraisCirculationPeriodiqueWin" height="100%" width="100%" style="margin:auto;" use="${typeFraisCirculationPeriodiqueWindow}">
+    <!-- <zscript src="/zs/typeFraisCirculationPeriodique.zs"/> -->
+        <borderlayout>
+            <west id="westPanel" title="Gestion d'enregistrement" size="40%" flex="true" splittable="true" collapsible="true" open="false">
+                <groupbox id="gbCrud" width="100%" height="100%">
+                    <grid fixedLayout="true">
+                        <rows>
+						
+                            <row>
+                                <label value="Libelle"/>				 
+                                <textbox id="fieldLibelle" constraint="no empty: Veillez indiquez une valeur" value="@{typeFraisCirculationPeriodiqueWin.objet.libelle, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+                            <row>
+                                <label value="Périodicité (J)"/>
+                                <textbox id="fieldPeriodicite" constraint="no empty: Veillez indiquez une valeur" value="@{typeFraisCirculationPeriodiqueWin.objet.periodicite, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+                            <row>
+                                <label value="Charge de base (MAD)"/>
+                                <textbox id="fieldChargeDeBase" constraint="no empty: Veillez indiquez une valeur" value="@{typeFraisCirculationPeriodiqueWin.objet.chargeDeBase, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+						                              
+                        </rows>
+                    </grid>					
+					
+                    <separator />
+                    <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));typeFraisCirculationPeriodiqueWin.add()" label="Sauveguarder" image="/images/skin/database_save.png"/>
+                    <button id="btnUpdate" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));typeFraisCirculationPeriodiqueWin.update()" label="Modifier" image="/images/skin/database_edit.png" visible="false"/>
+                    <button id="btnDelete" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));typeFraisCirculationPeriodiqueWin.delete()" label="Supprimer" image="/images/skin/database_delete.png" visible="false"/>
+                    <!-- <button id="btnNew" onClick="typeFraisCirculationPeriodiqueWin.newRecord()" label="Nouveau enregistrement" image="/images/skin/database_add.png"/> -->
+                    <button id="btnCancel" onClick="typeFraisCirculationPeriodiqueWin.cancel()" label="Annuler" image="/images/skin/cancel.png" visible="false"/>
+                    <button visible="false" id="triggerBtn" onBindingValidate=""/>
+                </groupbox>
+            </west>
+            <center border="none" flex="true">
+                <groupbox width="100%" height="100%">
+                    <listbox id="lstObjet" onSelect="typeFraisCirculationPeriodiqueWin.select()" model="@{typeFraisCirculationPeriodiqueWin.listeObjets}" selectedItem="@{typeFraisCirculationPeriodiqueWin.objetSelected}"  width="100%" height="100%" mold="paging" paginal="${paging}">
+                        <auxhead sclass="category-center">
+							 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterLibelle" value="@{typeFraisCirculationPeriodiqueWin.filtre.libelle}" onChanging="typeFraisCirculationPeriodiqueWin.ofs=0; typeFraisCirculationPeriodiqueWin.filtre.libelle=event.value; typeFraisCirculationPeriodiqueWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterPeriodicite" value="@{typeFraisCirculationPeriodiqueWin.filtre.periodicite}" onChanging="typeFraisCirculationPeriodiqueWin.ofs=0; typeFraisCirculationPeriodiqueWin.filtre.periodicite=event.value; typeFraisCirculationPeriodiqueWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterChargeDeBase" value="@{typeFraisCirculationPeriodiqueWin.filtre.chargeDeBase}" onChanging="typeFraisCirculationPeriodiqueWin.ofs=0; typeFraisCirculationPeriodiqueWin.filtre.chargeDeBase=event.value; typeFraisCirculationPeriodiqueWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>
+						 
+                        </auxhead>
+                        <listhead sizable="true">
+							
+                            <listheader label="Libelle" sort="auto(libelle)" onSort="typeFraisCirculationPeriodiqueWin.sort(event)"/>
+                            <listheader label="Périodicité" sort="auto(periodicite)" onSort="typeFraisCirculationPeriodiqueWin.sort(event)"/>
+                            <listheader label="Charge de base" sort="auto(chargeDeBase)" onSort="typeFraisCirculationPeriodiqueWin.sort(event)"/>
+							                                 
+                        </listhead>
+                        <listitem self="@{each=element}">                         
+                            
+                            <listcell label="@{element.libelle}"/>
+                            <listcell label="@{element.periodicite}"/>
+                            <listcell>
+                                <doublebox format="###.##" value="@{element.chargeDeBase}" readonly="true" width="90%"/>
+                            </listcell>
+							     
+                        </listitem>
+                    </listbox>
+                    <paging id="paging" totalSize="@{typeFraisCirculationPeriodiqueWin.tailleListe}" pageSize="@{typeFraisCirculationPeriodiqueWin.maxNb}" onPaging="typeFraisCirculationPeriodiqueWin.getNextElements(event);" />
+                    <separator/>
+                    <button id="btnNew" onClick="typeFraisCirculationPeriodiqueWin.newRecord()" label="Nouveau" image="/images/skin/database_add.png"/>
+                </groupbox>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

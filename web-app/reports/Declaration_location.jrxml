@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Declaration_location" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="432"/>
+	<parameter name="Image" class="java.io.InputStream"/>
+	<parameter name="nomsociete" class="java.lang.String"/>
+	<field name="premierConducteur.nom" class="java.lang.String"/>
+	<field name="premierConducteur.prenom" class="java.lang.String"/>
+	<field name="premierConducteur.cin" class="java.lang.String"/>
+	<field name="premierConducteur.cne" class="java.lang.String"/>
+	<field name="premierConducteur.carteSejour" class="java.lang.String"/>
+	<field name="premierConducteur.numeroPermis" class="java.lang.String"/>
+	<field name="premierConducteur.numeroPassport" class="java.lang.String"/>
+	<field name="premierConducteur.adresseMaroc" class="java.lang.String"/>
+	<field name="premierConducteur.adresseEtranger" class="java.lang.String"/>
+	<field name="premierConducteur.gsm" class="java.lang.String"/>
+	<field name="premierConducteur.mail" class="java.lang.String"/>
+	<field name="premierConducteur.codePostale" class="java.lang.String"/>
+	<field name="premierConducteur.ville" class="java.lang.String"/>
+	<field name="voiture.immatriculation" class="java.lang.String"/>
+	<field name="dateDepart" class="java.util.Date"/>
+	<field name="dateRestitution" class="java.util.Date"/>
+	<variable name="CIN_CNE_CS" class="java.lang.String">
+		<variableExpression><![CDATA[($F{premierConducteur.cin} == null || $F{premierConducteur.cin} == "") ? (($F{premierConducteur.cne} == null || $F{premierConducteur.cne} == "") ? (($F{premierConducteur.carteSejour} == null || $F{premierConducteur.carteSejour} == "") ? $F{premierConducteur.numeroPassport} : $F{premierConducteur.carteSejour}) : $F{premierConducteur.cne}) : $F{premierConducteur.cin}]]></variableExpression>
+	</variable>
+	<variable name="adresseClient" class="java.lang.String">
+		<variableExpression><![CDATA[$F{premierConducteur.adresseMaroc} == null || $F{premierConducteur.adresseMaroc} == "" ? $F{premierConducteur.adresseEtranger} : $F{premierConducteur.adresseMaroc}]]></variableExpression>
+	</variable>
+	<variable name="IS_CIN" class="java.lang.String">
+		<variableExpression><![CDATA[$F{premierConducteur.cin} == null || $F{premierConducteur.cin} == "" ? " " : "X"]]></variableExpression>
+	</variable>
+	<variable name="IS_CNE" class="java.lang.String">
+		<variableExpression><![CDATA[$F{premierConducteur.cne} == null || $F{premierConducteur.cne} == "" ? " " : "X"]]></variableExpression>
+	</variable>
+	<variable name="IS_CS" class="java.lang.String">
+		<variableExpression><![CDATA[$F{premierConducteur.carteSejour} == null || $F{premierConducteur.carteSejour} == "" ? " " : "X"]]></variableExpression>
+	</variable>
+	<variable name="IS_NUMPASS" class="java.lang.String">
+		<variableExpression><![CDATA[$F{premierConducteur.numeroPassport} == null || $F{premierConducteur.numeroPassport} == "" ? " " : "X"]]></variableExpression>
+	</variable>
+	<variable name="IS_MOROCCO" class="java.lang.String">
+		<variableExpression><![CDATA[$F{premierConducteur.adresseMaroc} == null ? " " : ($F{premierConducteur.adresseMaroc} == "" ? " " :"X")]]></variableExpression>
+	</variable>
+	<variable name="IS_OTHER" class="java.lang.String">
+		<variableExpression><![CDATA[$F{premierConducteur.adresseEtranger} == null ? " " : ($F{premierConducteur.adresseEtranger} == "" ? " " :"X")]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="752" splitType="Stretch">
+			<image>
+				<reportElement x="23" y="0" width="549" height="752"/>
+				<imageExpression class="java.io.InputStream"><![CDATA[$P{Image}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="192" width="335" height="11"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{premierConducteur.nom}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="204" width="335" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{premierConducteur.prenom}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="320" width="351" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{adresseClient}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="224" y="302" width="161" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{premierConducteur.numeroPermis}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="223" y="262" width="172" height="20"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{CIN_CNE_CS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="114" y="357" width="351" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{premierConducteur.ville}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="134" y="372" width="315" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{premierConducteur.codePostale}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="134" y="389" width="100" height="14"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{premierConducteur.gsm}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="134" y="403" width="300" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{premierConducteur.mail}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="260" y="416" width="103" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{voiture.immatriculation}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="203" y="507" width="212" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dateDepart})]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH.mm" isBlankWhenNull="true">
+				<reportElement x="203" y="518" width="212" height="12"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("HH:mm").format($F{dateDepart})]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="213" y="539" width="202" height="11"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dateRestitution})]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH.mm" isBlankWhenNull="true">
+				<reportElement x="213" y="550" width="202" height="11"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("HH:mm").format($F{dateRestitution})]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement x="203" y="587" width="182" height="11"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="70" y="255" width="17" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{IS_CIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="474" y="259" width="17" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{IS_CIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="71" y="267" width="17" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{IS_CS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="474" y="271" width="17" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{IS_CS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="71" y="278" width="17" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{IS_NUMPASS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="474" y="283" width="17" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{IS_NUMPASS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="223" width="16" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{IS_MOROCCO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="294" y="223" width="16" height="14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{IS_OTHER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="202" y="439" width="103" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{nomsociete}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

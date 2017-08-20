@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Rapport_des_frais_et_revenus" language="groovy" pageWidth="622" pageHeight="595" orientation="Landscape" columnWidth="582" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.2100000000000035"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fraisCirculationsPeriodiques" class="java.util.Collection"/>
+	<parameter name="fraisCirculations" class="java.util.Collection"/>
+	<parameter name="entretienPeriodique" class="java.util.Collection"/>
+	<parameter name="entretien" class="java.util.Collection"/>
+	<parameter name="locations" class="java.util.Collection"/>
+	<parameter name="nomsociete" class="java.lang.String"/>
+	<parameter name="titrerapport" class="java.lang.String"/>
+	<parameter name="VoitureFcpSubReport" class="java.io.File"/>
+	<parameter name="VoitureFcSubReport" class="java.io.File"/>
+	<parameter name="VoitureEpSubReport" class="java.io.File"/>
+	<parameter name="VoitureESubReport" class="java.io.File"/>
+	<parameter name="VoitureRevenusReport" class="java.io.File"/>
+	<field name="id" class="java.lang.Long"/>
+	<field name="model.marque.libelle" class="java.lang.String"/>
+	<field name="model.libelle" class="java.lang.String"/>
+	<field name="immatriculation" class="java.lang.String"/>
+	<group name="model.marque.libelle">
+		<groupExpression><![CDATA[$F{model.marque.libelle}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<staticText>
+					<reportElement mode="Opaque" x="0" y="0" width="100" height="22" forecolor="#666666" backcolor="#E6E6E6"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[Marque]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="100" y="0" width="482" height="22" forecolor="#006699" backcolor="#E6E6E6"/>
+					<textElement>
+						<font size="16" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{model.marque.libelle}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="22" width="582" height="1" forecolor="#666666"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="model.libelle">
+		<groupExpression><![CDATA[$F{model.libelle}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<textField isBlankWhenNull="true">
+					<reportElement x="100" y="0" width="455" height="22" forecolor="#006699"/>
+					<textElement>
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{model.libelle}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="20" forecolor="#666666"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[Modèle]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="immatriculation">
+		<groupExpression><![CDATA[$F{immatriculation}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<textField isBlankWhenNull="true">
+					<reportElement x="100" y="0" width="455" height="22" forecolor="#006699"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{immatriculation}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="100" height="20" forecolor="#666666"/>
+					<textElement>
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[Immatriculation]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="0" y="-20" width="582" height="92" backcolor="#006699"/>
+				<textField>
+					<reportElement x="20" y="20" width="234" height="43" forecolor="#FFFFFF"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{nomsociete}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="375" y="43" width="180" height="20" forecolor="#FFFFFF"/>
+					<textElement textAlignment="Right">
+						<font size="14" isBold="false"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{titrerapport}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="13"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="41">
+			<line>
+				<reportElement x="0" y="40" width="582" height="1" forecolor="#666666"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="108">
+			<subreport>
+				<reportElement positionType="Float" x="0" y="6" width="582" height="12" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="voiture_id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{fraisCirculationsPeriodiques})]]></dataSourceExpression>
+				<subreportExpression class="java.io.File"><![CDATA[$P{VoitureFcpSubReport}]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="26" width="582" height="12" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="voiture_id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{fraisCirculations})]]></dataSourceExpression>
+				<subreportExpression class="java.io.File"><![CDATA[$P{VoitureFcSubReport}]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="46" width="582" height="12" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="voiture_id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{entretienPeriodique})]]></dataSourceExpression>
+				<subreportExpression class="java.io.File"><![CDATA[$P{VoitureEpSubReport}]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="66" width="582" height="12" isRemoveLineWhenBlank="true"/>
+				<subreportParameter name="voiture_id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{entretien})]]></dataSourceExpression>
+				<subreportExpression class="java.io.File"><![CDATA[$P{VoitureESubReport}]]></subreportExpression>
+			</subreport>
+			<line>
+				<reportElement positionType="Float" x="0" y="106" width="582" height="1" forecolor="#666666"/>
+			</line>
+			<subreport>
+				<reportElement positionType="Float" x="0" y="86" width="582" height="12"/>
+				<subreportParameter name="voiture_id">
+					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{locations})]]></dataSourceExpression>
+				<subreportExpression class="java.io.File"><![CDATA[$P{VoitureRevenusReport}]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="17">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="4" width="555" height="13" backcolor="#E6E6E6"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="555" y="4" width="27" height="13" backcolor="#E6E6E6"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yy">
+				<reportElement x="0" y="4" width="100" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

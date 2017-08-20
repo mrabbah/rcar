@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./fcpWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+    <window id="fcpWin" height="100%" width="100%" style="margin:auto;" use="${fraisCirculationPeriodiqueWindow}">
+    <!-- <zscript src="/zs/fraisCirculationPeriodique.zs"/> -->
+        <borderlayout>
+            <west id="westPanel" title="Gestion d'enregistrement" size="40%" flex="true" splittable="true" collapsible="true" open="false">
+                <groupbox id="gbCrud" width="100%" height="100%">
+                    <grid fixedLayout="true">
+                        <rows>
+						
+                            <row>
+                                <label value="Date paiement prévu"/>
+								 
+                                <datebox id="fieldDate" constraint="no empty: Veillez indiquez une valeur" 
+                                         format="dd/MM/yyyy" value="@{fcpWin.objet.date, save-when='triggerBtn.onClick'}" 
+                                         onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");' 
+                                         width="100%"/>
+                            </row>												
+						
+                            <row>
+                                <label value="Détails"/>
+								 
+                                <textbox id="fieldDetails" multiline="true" height="100px"
+                                         value="@{fcpWin.objet.details, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");' width="100%"/>
+                            </row>												
+						
+                            <row>
+                                <label value="Montant"/>
+								 
+                                <doublebox id="fieldMontant" format="###.##" 
+                                           constraint="no empty, no negative: Veillez indiquez une valeur positive" 
+                                           value="@{fcpWin.objet.montant, save-when='triggerBtn.onClick'}" 
+                                           onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'
+                                           width="100%"/>
+                            </row>	
+                            
+                            <row>
+                                <label value="Paiement effectué"/>
+								 
+                                <checkbox id="fieldPayementEffectue" label="?" disabled="@{fcpWin.objet.payementEffectue}" checked="@{fcpWin.objet.payementEffectue, save-when='triggerBtn.onClick'}"/>
+                            </row>													
+						                              
+                        </rows>
+                    </grid>					
+					
+                    <separator />
+                    <grid fixedLayout="true" >
+                        <rows>
+                            <row>
+                                <label value="Voiture" />
+                                <combobox id="covoitures" model="@{fcpWin.voitures}" selectedItem="@{fcpWin.voitureSelected}" width="100%">
+                                    <comboitem self="@{each=elementvoiture}" label="@{elementvoiture}"/>
+                                </combobox>
+                            </row>
+                            <row>
+                                <label value="Type" />
+                                <combobox id="cotypeFraisCirculationPeriodiques" model="@{fcpWin.typeFraisCirculationPeriodiques}" selectedItem="@{fcpWin.typeFraisCirculationPeriodiqueSelected}" width="100%">
+                                    <comboitem self="@{each=elementtypeFraisCirculationPeriodique}" label="@{elementtypeFraisCirculationPeriodique}"/>
+                                </combobox>
+                            </row>
+                            <row>
+                                <label value="Prochain rendez-vous"/>
+
+                                <datebox id="fieldProchainRendezVous"
+                                         constraint="no empty, no past : Veillez indiquez une valeur"
+                                         format="dd/MM/yyyy" value="@{fcpWin.objet.prochainRendezVous, save-when='triggerBtn.onClick'}"
+                                         onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'
+                                         width="100%"/>
+                            </row>
+                        </rows>
+                    </grid>
+                    
+                    <separator />
+                    <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));fcpWin.add()" label="Sauveguarder" image="/images/skin/database_save.png"/>
+                    <button id="btnUpdate" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));fcpWin.update()" label="Modifier" image="/images/skin/database_edit.png" visible="false"/>
+                    <button id="btnDelete" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));fcpWin.delete()" label="Supprimer" image="/images/skin/database_delete.png" visible="false"/>
+                    <!-- <button id="btnNew" onClick="fcpWin.newRecord()" label="Nouveau enregistrement" image="/images/skin/database_add.png"/> -->
+                    <button id="btnCancel" onClick="fcpWin.cancel()" label="Annuler" image="/images/skin/cancel.png" visible="false"/>
+                    <button visible="false" id="triggerBtn" onBindingValidate=""/>
+                </groupbox>
+            </west>
+            <center border="none" flex="true">
+                <groupbox width="100%" height="100%">
+                    <listbox id="lstObjet" onSelect="fcpWin.select()" model="@{fcpWin.listeObjets}" selectedItem="@{fcpWin.objetSelected}"  width="100%" height="100%" mold="paging" paginal="${paging}">
+                        <auxhead sclass="category-center">
+							 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <combobox id="filtervoiture" model="@{fcpWin.voitures}" selectedItem="@{fcpWin.filtre.voiture}" autocomplete="true" autodrop="true" mold="rounded" onSelect="fcpWin.ofs=0;fcpWin.filtrer()" onOK="fcpWin.ofs=0;fcpWin.filtrer()">
+                                    <comboitem self="@{each=elementfiltrevoiture}" label="@{elementfiltrevoiture}"/>
+                                </combobox>
+                            </auxheader>
+                            
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <combobox id="filtertypeFraisCirculationPeriodique" model="@{fcpWin.typeFraisCirculationPeriodiques}" selectedItem="@{fcpWin.filtre.typeFraisCirculationPeriodique}" autocomplete="true" autodrop="true" mold="rounded" onSelect="fcpWin.ofs=0;fcpWin.filtrer()" onOK="fcpWin.ofs=0;fcpWin.filtrer()">
+                                    <comboitem self="@{each=elementfiltretypeFraisCirculationPeriodique}" label="@{elementfiltretypeFraisCirculationPeriodique}"/>
+                                </combobox>
+                            </auxheader>
+                            
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <datebox id="filterDate" format="dd/MM/yyyy" 
+                                         value="@{fcpWin.filtre.date}" 
+                                         onOK="fcpWin.ofs=0; fcpWin.filtrer(); self.focus();" 
+                                         width="90%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterDetails" value="@{fcpWin.filtre.details}" onChanging="fcpWin.ofs=0; fcpWin.filtre.details=event.value; fcpWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <doublebox id="filterMontant" value="@{fcpWin.filtre.montant}" width="100%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        fcpWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(fcpWin.filtre.montant != null) {
+                                                fcpWin.filtre.montant = null;
+                                            }
+                                        } else {
+                                            fcpWin.filtre.montant=new Double(event.value);
+                                        }
+                                        fcpWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute>
+                                </doublebox>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <datebox id="filterProchainRendezVous" format="dd/MM/yyyy" value="@{fcpWin.filtre.prochainRendezVous}" onOK="fcpWin.ofs=0; fcpWin.filtrer(); self.focus();" width="90%"/>
+                            </auxheader>
+                            
+                            <auxheader colspan="1">
+<!--                                <checkbox id="filterPayementEffectue" label="Paiement efféctue" checked="@{fcpWin.filtre.payementEffectue}" onCheck="fcpWin.ofs=0; fcpWin.filtrer();self.focus();"/>-->
+                                <combobox id="filterPaiementEffectue" readonly="true" width="90%">
+                                    <attribute name="onCreate">
+                                        <![CDATA[
+                                            List l = new ArrayList();
+                                            l.add("Oui/Non");
+                                            l.add("Oui");
+                                            l.add("Non");
+                                            ListModelList lm = new ListModelList(l);
+                                            lm.addSelection(lm.get(0));
+                                            self.setModel(lm);
+                                        ]]>
+                                    </attribute>
+                                    <attribute name="onChange">
+                                        <![CDATA[
+                                            if(self.selectedIndex == 0) {
+                                                fcpWin.filtre.payementEffectue = null;
+                                            } else if(self.selectedIndex == 1) {
+                                                fcpWin.filtre.payementEffectue = true;
+                                            } else {
+                                                fcpWin.filtre.payementEffectue = false;
+                                            }                                            
+                                            fcpWin.ofs=0;
+                                            fcpWin.filtrer();
+                                            fcpWin.focus();
+                                        ]]>
+                                    </attribute>
+                                </combobox> 
+                            </auxheader>
+						 
+                        </auxhead>
+                        <listhead sizable="true">
+                            
+                            <listheader label="Voiture" sort="auto(voiture)" onSort="fcpWin.sort(event)"/>
+                            
+                            <listheader label="Type FC Périodique" sort="auto(typeFraisCirculationPeriodique)" onSort="fcpWin.sort(event)"/>		
+							
+                            <listheader label="Date" sort="auto(date)" onSort="fcpWin.sort(event)"/>	
+							
+                            <listheader label="Détails" sort="auto(details)" onSort="fcpWin.sort(event)"/>	
+							
+                            <listheader label="Montant" sort="auto(montant)" onSort="fcpWin.sort(event)"/>	
+							
+                            <listheader label="Prochain rendez-vous" sort="auto(prochainRendezVous)" onSort="fcpWin.sort(event)"/>	
+                            
+                            <listheader label="Régelement effectué" sort="auto(payementEffectue)" onSort="fcpWin.sort(event)" align="center"/>	
+							                                 
+                        </listhead>
+                        <listitem self="@{each=element}">                         
+                            
+                            <listcell label="@{element.voiture}"/>
+                            
+                            <listcell label="@{element.typeFraisCirculationPeriodique}"/>
+                            
+                            <listcell>
+                                <datebox value="@{element.date}" format="dd/MM/yyyy" width="90%" buttonVisible="false" readonly="true"/>
+                            </listcell>
+							
+                            <listcell label="@{element.details}"/>
+							
+                            <listcell>
+                                <doublebox format="###.##" value="@{element.montant}" readonly="true" width="90%"/>
+                            </listcell>
+							
+                            <listcell>
+                                <datebox value="@{element.prochainRendezVous}" width="90%" format="dd/MM/yyyy" buttonVisible="false" readonly="true"/>
+                            </listcell>
+                            
+                            <listcell>
+                                <checkbox checked="@{element.payementEffectue}" disabled="true"/>
+                            </listcell>
+							     
+                        </listitem>
+                    </listbox>
+                    <paging id="paging" totalSize="@{fcpWin.tailleListe}" pageSize="@{fcpWin.maxNb}" onPaging="fcpWin.getNextElements(event);" />
+                    <separator/>
+                    <button id="btnNew" onClick="fcpWin.newRecord()" label="Nouveau" image="/images/skin/database_add.png"/>
+                </groupbox>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

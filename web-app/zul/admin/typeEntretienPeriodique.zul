@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./typeEntretienPeriodiqueWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+
+    <window id="typeEntretienPeriodiqueWin" height="100%" width="100%" style="margin:auto;" use="${typeEntretienPeriodiqueWindow}">
+    <!-- <zscript src="/zs/typeEntretienPeriodique.zs"/> -->
+        <borderlayout>
+            
+            <west id="westPanel" title="Gestion d'enregistrement" size="40%" flex="true" splittable="true" collapsible="true" open="false">
+                <groupbox id="gbCrud" width="100%" height="100%">
+                    <grid fixedLayout="true">
+                        <rows>
+						
+                            <row>
+                                <label value="Libelle"/>			 
+                                <textbox id="fieldLibelle" constraint="no empty: Veillez indiquez une valeur" value="@{typeEntretienPeriodiqueWin.objet.libelle, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+                            <row>
+                                <label value="Périodicité (Km)"/>		 
+                                <textbox id="fieldPeriodicite" constraint="no zero, no negative: Veillez indiquez une valeur positive" value="@{typeEntretienPeriodiqueWin.objet.periodicite, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+                            <row>
+                                <label value="Prix d'entretien (MAD)"/>
+                                <doublebox id="fieldPrixEntretien" format="####.##" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{typeEntretienPeriodiqueWin.objet.prixEntretien, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                            </row>
+						                              
+                        </rows>
+                    </grid>					
+					
+                    <separator />
+                    <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));typeEntretienPeriodiqueWin.add()" label="Sauveguarder" image="/images/skin/database_save.png"/>
+                    <button id="btnUpdate" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));typeEntretienPeriodiqueWin.update()" label="Modifier" image="/images/skin/database_edit.png" visible="false"/>
+                    <button id="btnDelete" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));typeEntretienPeriodiqueWin.delete()" label="Supprimer" image="/images/skin/database_delete.png" visible="false"/>
+                    <!-- <button id="btnNew" onClick="typeEntretienPeriodiqueWin.newRecord()" label="Nouveau enregistrement" image="/images/skin/database_add.png"/> -->
+                    <button id="btnCancel" onClick="typeEntretienPeriodiqueWin.cancel()" label="Annuler" image="/images/skin/cancel.png" visible="false"/>
+                    <button visible="false" id="triggerBtn" onBindingValidate=""/>
+                </groupbox>
+            </west>
+            <center border="none" flex="true">
+                <groupbox width="100%" height="100%">
+                    <listbox id="lstObjet" onSelect="typeEntretienPeriodiqueWin.select()" model="@{typeEntretienPeriodiqueWin.listeObjets}" selectedItem="@{typeEntretienPeriodiqueWin.objetSelected}"  width="100%" height="100%" mold="paging" paginal="${paging}">
+                        <auxhead sclass="category-center">
+							 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterLibelle" value="@{typeEntretienPeriodiqueWin.filtre.libelle}" onChanging="typeEntretienPeriodiqueWin.ofs=0; typeEntretienPeriodiqueWin.filtre.libelle=event.value; typeEntretienPeriodiqueWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>
+                            
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <intbox id="filterPeriodicite" value="@{typeEntretienPeriodiqueWin.filtre.periodicite}" width="90%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        typeEntretienPeriodiqueWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(typeEntretienPeriodiqueWin.filtre.periodicite != null) {
+                                                typeEntretienPeriodiqueWin.filtre.periodicite = null;
+                                            }
+                                        } else {
+                                            typeEntretienPeriodiqueWin.filtre.periodicite=new Integer(event.value);
+                                        }
+                                        typeEntretienPeriodiqueWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute>
+                                </intbox>
+                            </auxheader>
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <doublebox id="filterPrixEntretien" value="@{typeEntretienPeriodiqueWin.filtre.prixEntretien}" width="90%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        typeEntretienPeriodiqueWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(typeEntretienPeriodiqueWin.filtre.prixEntretien != null) {
+                                                typeEntretienPeriodiqueWin.filtre.prixEntretien = null;
+                                            }
+                                        } else {
+                                            typeEntretienPeriodiqueWin.filtre.prixEntretien=new Double(event.value);
+                                        }
+                                        typeEntretienPeriodiqueWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute>
+                                </doublebox>
+                            </auxheader>
+						 
+                        </auxhead>
+                        <listhead sizable="true">
+							
+                            <listheader label="Libelle" sort="auto(libelle)" onSort="typeEntretienPeriodiqueWin.sort(event)"/>	
+                            <listheader label="Périodicité  (Km)" sort="auto(periodicite)" onSort="typeEntretienPeriodiqueWin.sort(event)"/>
+                            <listheader label="Prix entretien (MAD)" sort="auto(prixEntretien)" onSort="typeEntretienPeriodiqueWin.sort(event)"/>
+							                                 
+                        </listhead>
+                        <listitem self="@{each=element}">                         
+                            
+                            <listcell label="@{element.libelle}"/>
+                            
+                            <listcell>
+                                <intbox value="@{element.periodicite}" readonly="true" width="90%"/>
+                            </listcell>
+                            
+                            <listcell>
+                                <doublebox format="####.##" value="@{element.prixEntretien}" readonly="true" width="90%"/>
+                            </listcell>
+							     
+                        </listitem>
+                    </listbox>
+                    <paging id="paging" totalSize="@{typeEntretienPeriodiqueWin.tailleListe}" pageSize="@{typeEntretienPeriodiqueWin.maxNb}" onPaging="typeEntretienPeriodiqueWin.getNextElements(event);" />
+                    <separator/>
+                    <button id="btnNew" onClick="typeEntretienPeriodiqueWin.newRecord()" label="Nouveau" image="/images/skin/database_add.png"/>
+                </groupbox>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

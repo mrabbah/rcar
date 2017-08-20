@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?init class="org.zkoss.zkplus.databind.AnnotateDataBinderInit" arg0="./locationWin" ?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
+    <style>div.minimize {
+        border: 1px solid #79858E;
+        background: #D3E1EC;
+        position: absolute;
+        opacity: 0.8;
+        z-index: 999999;
+        }
+    </style>
+    <script type="text/javascript"><![CDATA[
+        function flowDown(wleft, wtop) {
+            var w = jq('$locationWin'), b = jq('$lstObjet');
+            //Minimize from the Window to the order button
+            jq('<div class="minimize" />').appendTo("body").css({
+                left : wleft,
+                top : wtop,
+                width : w.width(),
+                height : 10
+            });
+            p = b.offset();
+            jq('.minimize').animate({
+                left : p.left + b.width() / 2,
+                top : p.top + b.height() / 2,
+                width : 0,
+                height : 0
+            }, function() {
+                jq(this).remove();
+            });
+        }
+        ]]>
+    </script>
+    <window id="locationWin" height="100%" width="100%" style="margin:auto;" use="${locationWindow}">
+    <!-- <zscript src="/zs/location.zs"/> -->
+        <borderlayout>
+            <north id="eastPanel" size="65px" open="false"  title="Recherche avancée" flex="true" splittable="true"  collapsible="true"  >
+                <hlayout spacing="10px" style="margin-top:9px;margin-left:10px">		
+<!--					
+                    <label value="deuxiemeConducteur :" />
+                    <combobox id="filterdeuxiemeConducteur" model="@{locationWin.deuxiemeConducteurs}" selectedItem="@{locationWin.filtre.deuxiemeConducteur}" autocomplete="true" autodrop="true" mold="rounded" onSelect="locationWin.ofs=0;locationWin.filtrer()" onOK="locationWin.ofs=0;locationWin.filtrer()">
+                        <comboitem self="@{each=elementfiltredeuxiemeConducteur}" label="@{elementfiltredeuxiemeConducteur}"/>
+                    </combobox>-->
+					
+                    <label value="Agent loueur :" />
+                    <combobox id="filteragentLoueurResponsable" model="@{locationWin.agentLoueurResponsables}" selectedItem="@{locationWin.filtre.agentLoueurResponsable}" autocomplete="true" autodrop="true" mold="rounded" onSelect="locationWin.ofs=0;locationWin.filtrer()" onOK="locationWin.ofs=0;locationWin.filtrer()">
+                        <comboitem self="@{each=elementfiltreagentLoueurResponsable}" label="@{elementfiltreagentLoueurResponsable}"/>
+                    </combobox>
+                    
+                    
+										                    
+                </hlayout>
+            </north>
+            <west id="westPanel" title="Gestion d'enregistrement" size="40%" flex="true" splittable="true" collapsible="true" open="false">
+                <groupbox id="gbCrud" width="100%" height="100%" >
+                    <panel title="Informations de base" open="true" border="normal" collapsible="true" sizable="true">
+                        <panelchildren style="overflow: auto">
+                            <grid fixedLayout="true" >
+                                <rows>
+                                    <row>
+                                        <label value="Location archivée ? " />
+                                        <checkbox id="fieldEstArchive" label="?" checked="@{locationWin.objet.estArchive, save-when='triggerBtn.onClick'}"/>
+                                    </row>
+                                    <row>
+                                        <label value="Premier conducteur" />
+                                        <combobox id="copremierConducteurs" model="@{locationWin.premierConducteurs}" selectedItem="@{locationWin.premierConducteurSelected}">
+                                            <comboitem self="@{each=elementpremierConducteur}" label="@{elementpremierConducteur}"/>
+                                        </combobox>
+                                    </row>
+                                    <row>
+                                        <label value="Deuxième conducteur" />
+                                        <combobox id="codeuxiemeConducteurs" model="@{locationWin.deuxiemeConducteurs}" selectedItem="@{locationWin.deuxiemeConducteurSelected}">
+                                            <comboitem self="@{each=elementdeuxiemeConducteur}" label="@{elementdeuxiemeConducteur}"/>
+                                        </combobox>
+                                    </row>
+                                    <row>
+                                        <label value="Voiture" />
+                                        <combobox id="covoitures" model="@{locationWin.voitures}" selectedItem="@{locationWin.voitureSelected}" onSelect="locationWin.changerDeVoiture()">
+                                            <comboitem self="@{each=elementvoiture}" label="@{elementvoiture}"/>
+                                        </combobox>
+                                    </row>
+                                    <row>
+                                        <label value="Agent loueur" />
+                                        <combobox id="coagentLoueurResponsables" model="@{locationWin.agentLoueurResponsables}" selectedItem="@{locationWin.agentLoueurResponsableSelected}">
+                                            <comboitem self="@{each=elementagentLoueurResponsable}" label="@{elementagentLoueurResponsable}"/>
+                                        </combobox>
+                                    </row>
+                                </rows>
+                            </grid>
+                        </panelchildren>
+                    </panel>
+                    <separator />
+                    <panel title="Informations location" open="false" border="normal" collapsible="true" sizable="true" >
+                        <panelchildren style="overflow: auto">
+                            <grid fixedLayout="true">
+                                <rows>
+						
+                                    <row id="prixachatId" visible='false'>
+                                        <label value="Prix Achat par jour"/>		 
+                                        <doublebox id="fieldPrixAchatParJour" format="###.##" width="100%" constraint="no empty, no negative: Veillez indiquez une valeur positive" 
+                                                   value="@{locationWin.objet.prixAchatParJour, save-when='self.onChange'}" 
+                                                   onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>
+                                    <row>
+                                        <label value="Prix par jour"/>
+								 
+                                        <doublebox id="fieldPrixParJour" format="###.##" width="100%"
+                                                   constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{locationWin.objet.prixParJour, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'>
+                                            <attribute name="onChanging">
+                                            <![CDATA[
+                                                fieldDateDepart.constraint = "";
+                                                fieldDateRestitution.constraint = "";
+                                                if(fieldDateDepart.value != null && fieldDateRestitution.value != null) {
+                                                    long dr = fieldDateRestitution.value.getTime();
+                                                    long dd = fieldDateDepart.value.getTime();
+                                                    int diff = (int) ((dr - dd)/(24*60*60*1000));
+                                                    if(event.value != null && !event.value.equals("")) {
+                                                        fieldMontantPaye.value =  new Double(event.value) * diff;
+                                                    } else {
+                                                        fieldMontantPaye.value = 0.0;
+                                                    }
+                                                    
+                                                }
+                                                fieldDateDepart.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldDateRestitution.constraint = "no empty: Veillez indiquez une valeur";
+                                                
+                                            ]]>
+                                            </attribute>
+                                        </doublebox>
+                                    </row>												
+						
+                                    <row>
+                                        <label value="Date départ"/>
+								 
+                                        <datebox id="fieldDateDepart" width="100%" constraint="no empty: Veillez indiquez une valeur" format="dd/MM/yyyy HH:mm" value="@{locationWin.objet.dateDepart, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'>
+                                            <attribute name="onChange">
+                                            <![CDATA[
+                                                fieldDateDepart.constraint = "";
+                                                fieldDateRestitution.constraint = "";
+                                                if(fieldDateDepart.value != null && fieldDateRestitution.value != null) {
+                                                    long dr = fieldDateRestitution.value.getTime();
+                                                    long dd = fieldDateDepart.value.getTime();
+                                                    int diff = (int) ((dr - dd)/(24*60*60*1000));
+                                                    fieldMontantPaye.value =  fieldPrixParJour.value * diff;
+                                                }
+                                                fieldDateDepart.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldDateRestitution.constraint = "no empty: Veillez indiquez une valeur";
+                                            ]]>
+                                            </attribute>
+                                        </datebox>
+                                    </row>												
+						
+                                    <row>
+                                        <label value="Date restitution"/>
+								 
+                                        <datebox id="fieldDateRestitution" width="100%" constraint="no empty: La date de restitution doit être après la date de départ" format="dd/MM/yyyy HH:mm" value="@{locationWin.objet.dateRestitution, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'>
+                                            <attribute name="onChange">
+                                            <![CDATA[
+                                                fieldDateDepart.constraint = "";
+                                                fieldDateRestitution.constraint = "";
+                                                if(fieldDateDepart.value != null && fieldDateRestitution.value != null) {
+                                                    long dr = fieldDateRestitution.value.getTime();
+                                                    long dd = fieldDateDepart.value.getTime();
+                                                    int diff = (int) ((dr - dd)/(24*60*60*1000));
+                                                    fieldMontantPaye.value =  fieldPrixParJour.value * diff;
+                                                    nbJours.value = diff;
+                                                }
+                                                fieldDateDepart.constraint = "no empty: Veillez indiquez une valeur";
+                                                fieldDateRestitution.constraint = "no empty: Veillez indiquez une valeur";
+                                            ]]>
+                                            </attribute>
+                                        </datebox>
+                                    </row>												
+                                    <row>
+                                        <label value="Nombre de jours"/>
+								 
+                                        <intbox id="nbJours" width="100%" readonly="true"/>
+                                    </row>
+                                    <row>
+                                        <label value="Kilometrage de depart"/>
+								 
+                                        <intbox id="fieldKilometrageDepart" width="100%" readonly="true" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{locationWin.objet.kilometrageDepart, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>												
+						
+                                    <row>
+                                        <label value="KilometrageRetour"/>
+								 
+                                        <intbox id="fieldKilometrageRetour" width="100%" value="@{locationWin.objet.kilometrageRetour, save-when='triggerBtn.onClick'}" />
+                                    </row>												
+						
+                                    <row>
+                                        <label value="Lieu de livraison"/>
+								 
+                                        <textbox id="fieldLieuLivraison" width="100%" value="@{locationWin.objet.lieuLivraison, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>												
+						
+                                    <row>
+                                        <label value="Lieu de reprise"/>
+								 
+                                        <textbox id="fieldLieuReprise" width="100%"  value="@{locationWin.objet.lieuReprise, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>												
+						
+                                    <row>
+                                        <label value="Montant payé"/>
+								 
+                                        <doublebox id="fieldMontantPaye" width="100%" format="###.##" constraint="no empty, no negative: Veillez indiquez une valeur positive" value="@{locationWin.objet.montantPaye, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>												
+						
+                                    <row>
+                                        <label value="Mode de paiment"/>			 
+<!--                                        <textbox id="fieldModePaiment" value="@{locationWin.objet.modePaiment, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>-->
+                                        <combobox id="fieldModePaiment" readonly="true" style="margin-left:3px" width="130px" value="@{locationWin.objet.modePaiment, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'>
+                                            <comboitem label="Espèce" value="Espèce"/>
+                                            <comboitem label="Chèque" value="Chèque"/>
+                                        </combobox>
+                                    </row>												
+						
+                                    <row>
+                                        <label value="Observations"/>
+								 
+                                        <textbox multiline="true" width="100%"  id="fieldObservations" value="@{locationWin.objet.observations, save-when='triggerBtn.onClick'}" onBindingSave='if(self.value == null)throw new WrongValueException(self, "Vous devriez indiquer une valeur");'/>
+                                    </row>												
+				                              
+                                </rows>
+                            </grid>
+                        </panelchildren>
+                        
+                    </panel>
+                    <separator />
+                    
+                    <panel title="Contrat numérisée" open="false" border="normal" collapsible="true">
+                        <panelchildren>
+                            <grid fixedLayout="true" >
+                                <rows>
+                                    <row>
+                                        <label value="Contrat"/>
+                                        <fileupload  id="btnUploadContrat" label="Charger" onUpload="locationWin.updateImageContrat(event.getMedia())" />                                    
+                                    </row>                            
+                                    <row>
+                                        <label value="Apperçu"/>								 
+                                        <image id="appercuContrat" width="90px" height="90px" onClick="if(self.content != null)locationWin.zoomerImage(self.content)"/>
+                                    </row>												
+                                
+                                </rows>
+                            </grid>					
+                        </panelchildren>
+                    </panel>	
+                    <separator />
+                    <panel title="Déclaration préalable numerisée" open="false" border="normal" collapsible="true">
+                        <panelchildren>
+                            <grid fixedLayout="true" >
+                                <rows>
+                                    <row>
+                                        <label value="Déclaration"/>
+                                        <fileupload  id="btnUploadDeclaration" label="Charger" onUpload="locationWin.updateImageDeclaration(event.getMedia())" />                                    
+                                    </row>                            
+                                    <row>
+                                        <label value="Apperçu"/>								 
+                                        <image id="appercuDeclaration" width="90px" height="90px" onClick="if(self.content != null)locationWin.zoomerImage(self.content)"/>
+                                    </row>												
+                                
+                                </rows>
+                            </grid>					
+                        </panelchildren>
+                    </panel>	
+                    <separator />
+                    <button id="btnSave" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationWin.add()" label="Sauveguarder" image="/images/skin/database_save.png"/>
+                    <button id="btnUpdate" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationWin.update()" label="Modifier" image="/images/skin/database_edit.png" visible="false"/>
+<!--                    <button id="btnDelete" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationWin.delete()" label="Supprimer" image="/images/skin/database_delete.png" visible="false"/>      -->
+                    <!-- <button id="btnNew" onClick="locationWin.newRecord()" label="Nouveau enregistrement" image="/images/skin/database_add.png"/> -->
+                    <button id="btnCancel" onClick="locationWin.cancel()" label="Annuler" image="/images/skin/cancel.png" visible="false"/>
+                    <button visible="false" id="triggerBtn" onBindingValidate=""/>
+                </groupbox>
+            </west>
+            <center border="none" flex="true">
+                <groupbox width="100%" height="100%">
+                    <listbox id="lstObjet" model="@{locationWin.listeObjets}" selectedItem="@{locationWin.objetSelected}"  width="100%" height="100%" mold="paging" paginal="${paging}">
+                        <attribute name="onSelect">
+                            <![CDATA[
+                                locationWin.select();
+                                if(fieldDateDepart.value != null && fieldDateRestitution.value != null) {
+                                    long dr = fieldDateRestitution.value.getTime();
+                                    long dd = fieldDateDepart.value.getTime();
+                                    nbJours.value = (int) ((dr - dd)/(24*60*60*1000));
+                                }
+                            ]]>
+                        </attribute>
+                        <auxhead sclass="category-center">
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />		
+                                <combobox id="filtervoiture" model="@{locationWin.voitures}" selectedItem="@{locationWin.filtre.voiture}" autocomplete="true" autodrop="true" mold="rounded" onSelect="locationWin.ofs=0;locationWin.filtrer()" onOK="locationWin.ofs=0;locationWin.filtrer()">
+                                    <comboitem self="@{each=elementfiltrevoiture}" label="@{elementfiltrevoiture}"/>
+                                </combobox>
+                            </auxheader>
+                            
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <datebox id="filterDateDepart" format="dd/MM/yyyy" value="@{locationWin.filtre.dateDepart}" onOK="locationWin.ofs=0; locationWin.filtrer(); self.focus();" width="90%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <datebox id="filterDateRestitution" format="dd/MM/yyyy" value="@{locationWin.filtre.dateRestitution}" onOK="locationWin.ofs=0; locationWin.filtrer(); self.focus();" width="90%"/>
+                            </auxheader>
+                            
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <doublebox id="filterPrixParJour" format="###.##" value="@{locationWin.filtre.prixParJour}" width="100%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        locationWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(locationWin.filtre.prixParJour != null) {
+                                                locationWin.filtre.prixParJour = null;
+                                            }
+                                        } else {
+                                            locationWin.filtre.prixParJour=new Double(event.value);
+                                        }
+                                        locationWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute>    
+                                </doublebox>
+                            </auxheader>												
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <doublebox id="filterMontantPaye" value="@{locationWin.filtre.montantPaye}" width="100%">
+                                    <attribute name="onChanging">
+                                    <![CDATA[
+                                        locationWin.ofs=0;
+                                        if(event.value.equals("")) {
+                                            if(locationWin.filtre.montantPaye != null) {
+                                                locationWin.filtre.montantPaye = null;
+                                            }
+                                        } else {
+                                            locationWin.filtre.montantPaye=new Double(event.value);
+                                        }
+                                        locationWin.filtrer();
+                                        self.focus();
+                                        if(!event.value.equals("")) {
+                                            self.setSelectionRange(self.value.toString().length(), self.value.toString().length());
+                                        }
+                                    ]]>
+                                    </attribute> 
+                                </doublebox>
+                            </auxheader>	 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <combobox id="filterpremierConducteur" model="@{locationWin.premierConducteurs}" selectedItem="@{locationWin.filtre.premierConducteur}" autocomplete="true" autodrop="true" mold="rounded" onSelect="locationWin.ofs=0;locationWin.filtrer()" onOK="locationWin.ofs=0;locationWin.filtrer()">
+                                    <comboitem self="@{each=elementfiltrepremierConducteur}" label="@{elementfiltrepremierConducteur}"/>
+                                </combobox>
+                            </auxheader>
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <combobox id="filterEstArchive" readonly="true" onOK="" width="90%">
+                                    <attribute name="onCreate">
+                                    <![CDATA[
+                                        List l = new ArrayList();
+                                        l.add("Oui/Non");
+                                        l.add("Oui");
+                                        l.add("Non");
+                                        ListModelList lm = new ListModelList(l);
+                                        lm.addSelection(lm.get(2));
+                                        self.setModel(lm);
+                                        locationWin.filtre.estArchive = false;
+                                        locationWin.ofs=0;
+                                        locationWin.filtrer();
+                                    ]]>
+                                    </attribute>
+                                    <attribute name="onChange">
+                                    <![CDATA[
+                                        if(self.selectedIndex == 0) {
+                                            locationWin.filtre.estArchive = null;
+                                        } else if(self.selectedIndex == 1) {
+                                            locationWin.filtre.estArchive = true;
+                                        } else {
+                                            locationWin.filtre.estArchive = false;
+                                        }
+                                        locationWin.ofs=0;
+                                        locationWin.filtrer();
+                                    ]]>
+                                    </attribute>
+                                </combobox>  
+                            </auxheader>										
+<!--                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <intbox id="filterKilometrageDepart" value="@{locationWin.filtre.kilometrageDepart}" onChanging="locationWin.ofs; locationWin.filtre.kilometrageDepart=event.value; locationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <intbox id="filterKilometrageRetour" value="@{locationWin.filtre.kilometrageRetour}" onChanging="locationWin.ofs; locationWin.filtre.kilometrageRetour=event.value; locationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterLieuLivraison" value="@{locationWin.filtre.lieuLivraison}" onChanging="locationWin.ofs; locationWin.filtre.lieuLivraison=event.value; locationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterLieuReprise" value="@{locationWin.filtre.lieuReprise}" onChanging="locationWin.ofs; locationWin.filtre.lieuReprise=event.value; locationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												-->
+						 
+<!--                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterModePaiment" value="@{locationWin.filtre.modePaiment}" onChanging="locationWin.ofs; locationWin.filtre.modePaiment=event.value; locationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterObservations" value="@{locationWin.filtre.observations}" onChanging="locationWin.ofs; locationWin.filtre.observations=event.value; locationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												-->
+						 
+<!--                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterContratNumeriser" value="@{locationWin.filtre.contratNumeriser}" onChanging="locationWin.ofs; locationWin.filtre.contratNumeriser=event.value; locationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												
+						 
+                            <auxheader colspan="1">
+                                <image src="/images/skin/funnel.png" width="10px" height="10px" />
+                                <textbox id="filterDeclarationPrealableNumeriser" value="@{locationWin.filtre.declarationPrealableNumeriser}" onChanging="locationWin.ofs; locationWin.filtre.declarationPrealableNumeriser=event.value; locationWin.filtrer(); self.focus(); self.setSelectionRange(self.value.length(), self.value.length())" width="100%"/>
+                            </auxheader>												-->
+						 
+                        </auxhead>
+                        <listhead sizable="true">
+                            <listheader label="Voiture" sort="auto(voiture)" onSort="locationWin.sort(event)"/>
+                            <listheader label="Date départ" sort="auto(dateDepart)" onSort="locationWin.sort(event)"/>	
+                            <listheader label="Date restitution" sort="auto(dateRestitution)" onSort="locationWin.sort(event)"/>	
+                            <listheader label="Prix par jour" sort="auto(prixParJour)" onSort="locationWin.sort(event)"/>	
+                            <listheader label="Montant payé" sort="auto(montantPaye)" onSort="locationWin.sort(event)"/>	
+                            <listheader label="Premier Conducteur" sort="auto(premierConducteur)" onSort="locationWin.sort(event)"/>
+                            <listheader label="Archivée?"/>    
+<!--		            		 			
+                            <listheader label="KilometrageDepart" sort="auto(kilometrageDepart)" onSort="locationWin.sort(event)"/>	
+							
+                            <listheader label="KilometrageRetour" sort="auto(kilometrageRetour)" onSort="locationWin.sort(event)"/>	
+							
+                            <listheader label="LieuLivraison" sort="auto(lieuLivraison)" onSort="locationWin.sort(event)"/>	
+							
+                            <listheader label="LieuReprise" sort="auto(lieuReprise)" onSort="locationWin.sort(event)"/>	
+							
+							
+                            <listheader label="ModePaiment" sort="auto(modePaiment)" onSort="locationWin.sort(event)"/>	
+							
+                            <listheader label="Observations" sort="auto(observations)" onSort="locationWin.sort(event)"/>	
+							
+                            <listheader label="ContratNumeriser" sort="auto(contratNumeriser)" onSort="locationWin.sort(event)"/>	
+							
+                            <listheader label="DeclarationPrealableNumeriser" sort="auto(declarationPrealableNumeriser)" onSort="locationWin.sort(event)"/>	-->
+							                                 
+                        </listhead>
+                        <listitem self="@{each=element}">                         
+                            
+                            <listcell label="@{element.voiture}"/>
+                            
+                            <listcell label="@{element.dateDepart}"/>
+							
+                            <listcell label="@{element.dateRestitution}"/>
+                            <listcell label="@{element.prixParJour}"/>
+							
+                            <listcell label="@{element.montantPaye}"/>
+                            
+                            <listcell label="@{element.premierConducteur}"/>
+                            <listcell label="@{element.estArchive, converter='com.choranet.zk.TrueFalseConverter'}" />
+						     
+<!--                            <listcell label="@{element.kilometrageDepart}"/>
+							
+                            <listcell label="@{element.kilometrageRetour}"/>
+							
+                            <listcell label="@{element.lieuLivraison}"/>
+							
+                            <listcell label="@{element.lieuReprise}"/>
+							
+                            
+							
+                            <listcell label="@{element.modePaiment}"/>
+							
+                            <listcell label="@{element.observations}"/>
+							
+                            <listcell label="@{element.contratNumeriser}"/>
+							
+                            <listcell label="@{element.declarationPrealableNumeriser}"/>-->
+							     
+                        </listitem>
+                    </listbox>
+                    <paging id="paging" totalSize="@{locationWin.tailleListe}" pageSize="@{locationWin.maxNb}" onPaging="locationWin.getNextElements(event);" />
+                    <separator/>
+                    <button id="btnNewOld" onClick="locationWin.newRecord();nbJours.value = 0;" label="Nouveau PV (Ancien client)" image="/images/skin/database_add.png"/>
+                    <button id="btnNewNew" onClick="locationWin.newRecordNewClient()" label="Nouveau PV (Nouveau client)" image="/images/skin/database_add.png"/>
+                    <button id="btnDeclaration" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationWin.genererDeclaration()" label="Déclaration préalable" image="/images/skin/pdf-soubor-logo.png" visible="false"/>
+                    <button id="btnPv1" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationWin.genererPv(false)" label="PV sans arrière plan" image="/images/skin/pdf-soubor-logo.png" visible="false"/>
+                    <button id="btnPv2" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationWin.genererPv(true)" label="PV avec arrière plan" image="/images/skin/pdf-soubor-logo.png" visible="false"/>
+                    <button id="btnFacture" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationWin.genererFacture()" label="Facture" image="/images/skin/pdf-soubor-logo.png" visible="false"/>   
+                    <button id="btnCopieFacture" onClick="Events.sendEvent(new Event(Events.ON_CLICK,triggerBtn));locationWin.genererCopieFacture()" label="Facture copie" image="/images/skin/pdf-soubor-logo.png" visible="false"/>   
+                </groupbox>
+            </center>
+        </borderlayout>
+        <window id="modalDialogChoix" title="Générer Facture" border="normal" width="310px"
+            closable="true" action="show: slideDown;hide: slideUp" position="center,center" visible="false" onClose="self.visible=false; event.stopPropagation();">
+            <hlayout spacing="10px" style="margin-top:9px;margin-left:10px">
+                <textbox id="fieldNumFacture">
+                    <attribute name="onChanging">
+                        <![CDATA[
+                            btnImprimerFact.visible = false;
+                            btnVerifierNumFact.visible = true;
+                        ]]>
+                    </attribute>
+                </textbox>
+                <button id="btnVerifierNumFact" visible="false" onClick="locationWin.verifierNumFacture();" label="Vérifier N° Facture" image="/images/skin/database_add.png"/>
+                <button id="btnImprimerFact" label="Imprimer" onClick='locationWin.genererFactureAvecNum(fieldNumFacture.value, "Facture");self.visible=false; btnVerifierNumFact.visible=false; modalDialogChoix.visible=false;'/> 
+            </hlayout>
+        </window>
+    </window>
+</zk>

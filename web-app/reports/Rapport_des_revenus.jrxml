@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Rapport_des_frais_fcp" language="groovy" pageWidth="580" pageHeight="802" columnWidth="580" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.1000000000000039"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="dateDepart" class="java.sql.Timestamp"/>
+	<field name="dateRestitution" class="java.sql.Timestamp"/>
+	<field name="prixParJour" class="java.lang.Double"/>
+	<field name="montantPaye" class="java.lang.Double"/>
+	<field name="voiture.immatriculation" class="java.lang.String"/>
+	<field name="voiture.model.marque.libelle" class="java.lang.String"/>
+	<field name="voiture.model.libelle" class="java.lang.String"/>
+	<variable name="Total" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{montantPaye}]]></variableExpression>
+	</variable>
+	<variable name="montant_facture" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{prixParJour} * ($F{dateRestitution} - $F{dateDepart})]]></variableExpression>
+	</variable>
+	<variable name="total_montant_facture" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{montant_facture}]]></variableExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="24">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="1" width="242" height="19" forecolor="#04202E" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Revenus des locations :]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="15">
+			<line>
+				<reportElement x="0" y="14" width="580" height="1" forecolor="#666666"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="0" width="80" height="14" forecolor="#04202E" backcolor="#D7E6F6"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date départ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="82" y="0" width="80" height="14" forecolor="#04202E" backcolor="#D7E6F6"/>
+				<textElement textAlignment="Center">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date restitution]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="302" y="0" width="76" height="14" forecolor="#04202E" backcolor="#D7E6F6"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total facture]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="225" y="0" width="77" height="14" forecolor="#04202E" backcolor="#D7E6F6"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Montant payé]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="162" y="0" width="63" height="14" forecolor="#04202E" backcolor="#D7E6F6"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[prix par jour]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="2" y="0" width="80" height="18"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dateDepart})]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="82" y="0" width="80" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat("dd-MM-yyyy").format($F{dateRestitution})]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;###0.00-" isBlankWhenNull="true">
+				<reportElement x="162" y="0" width="63" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{prixParJour}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;###0.00-" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="225" y="0" width="77" height="18" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{montantPaye}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00;###0.00-" isBlankWhenNull="true">
+				<reportElement x="302" y="0" width="76" height="18"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{montant_facture}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="19">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="327" height="18" forecolor="#04202E" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="11" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<text><![CDATA[Total des revenus : ]]></text>
+			</staticText>
+			<textField pattern="###0.00;###0.00-" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="224" y="1" width="77" height="18" forecolor="#04202E" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{Total}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="580" height="1" forecolor="#99B4D1"/>
+			</line>
+			<textField pattern="###0.00;###0.00-" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="301" y="1" width="76" height="17" forecolor="#04202E" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="11" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{total_montant_facture}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>
